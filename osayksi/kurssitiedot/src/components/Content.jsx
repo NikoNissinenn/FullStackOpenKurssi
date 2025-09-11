@@ -2,12 +2,12 @@ import React from 'react';
 import Part from "./Part";
 
 const Content = (props) => {
-  const part1 = props.part1;
-  const part2 = props.part2;
-  const part3 = props.part3;
-  const exercises1 = props.exercises1
-  const exercises2 = props.exercises2
-  const exercises3 = props.exercises3
+  const part1 = props.part1.name;
+  const part2 = props.part2.name;
+  const part3 = props.part3.name;
+  const exercises1 = props.part1.exercises
+  const exercises2 = props.part2.exercises
+  const exercises3 = props.part3.exercises
 
   return (
     <div>
