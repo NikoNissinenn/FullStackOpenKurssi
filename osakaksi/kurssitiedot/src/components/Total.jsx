@@ -1,12 +1,12 @@
 import React from 'react';
 
-const Total = (props) => {
-  const exone = props.course.parts[0].exercises;
-  const extwo = props.course.parts[1].exercises;
-  const exthree = props.course.parts[2].exercises;
+const Total = ({parts}) => {
+  const sum = parts.reduce((sum, part) => sum + part.exercises, 0)
 
   return (
-    <p>Number of exercises {exone+extwo+exthree}</p>
+    <div>
+      <p>Total of {sum} exercises</p>
+    </div>
   )
 }
 
