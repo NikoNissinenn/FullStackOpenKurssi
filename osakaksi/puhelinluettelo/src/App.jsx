@@ -13,6 +13,12 @@ const App = () => {
       name: newName
     };
 
+    if (persons.find((person) => person.name === newName)) {
+      alert(`${newName} is already in the phonebook`);
+      setNewName("");
+      return;
+    }
+
     setPersons(persons.concat(newPerson));
     setNewName("");
   }
@@ -26,7 +32,7 @@ const App = () => {
       <h2>Phonebook</h2>
       <form onSubmit={addPerson}>
         <div>
-          name: <input value={newName} onChange={handlePersonChange}/>
+          name: <input value={newName} onChange={handlePersonChange} name='lisays'/>
         </div>
         <div>
           <button type="submit">add</button>
@@ -40,7 +46,6 @@ const App = () => {
       </ul>
     </div>
   )
-
 }
 
 export default App
