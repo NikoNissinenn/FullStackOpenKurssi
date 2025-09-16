@@ -11,7 +11,7 @@ const App = () => {
   const [newFilter, setNewFilter] = useState("")
 
   // npx json-server --port 3001 db.json
-  useEffect(() => {
+  const fetchPersons = () => {
     try {
       axios.get("http://localhost:3001/persons")
       .then(response => {
@@ -19,7 +19,11 @@ const App = () => {
         console.log("JSON data fetched from localhost")})
     } catch (error) {
       console.log(error, error.message)
-    }   
+    } 
+  }
+  
+  useEffect(() => {
+    fetchPersons() 
   }, []);
 
   const addPerson = (event) => {
@@ -33,7 +37,17 @@ const App = () => {
     if (persons.find((person) => person.name === newName)) {
       alert(`${newName} is already in the phonebook`);
       setNewName("");
+      setNewNumber("");
       return;
+    } else {
+      try {
+        axios.post("http://localhost:3001/persons", newPerson)
+        .then(response => {
+          console.log(response)
+        })
+      } catch (error) {
+        console.log(error, error.message)
+      }      
     }
 
     setPersons(persons.concat(newPerson));
