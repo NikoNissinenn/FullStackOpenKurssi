@@ -3,6 +3,7 @@ import PersonForm from './components/PersonForm'
 import Persons from './components/Persons'
 import Filter from './components/Filter'
 import axios from "axios"
+import personService from "./services/persons"
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
@@ -11,19 +12,14 @@ const App = () => {
   const [newFilter, setNewFilter] = useState("")
 
   // npx json-server --port 3001 db.json
-  const fetchPersons = () => {
+  useEffect(() => {
     try {
-      axios.get("http://localhost:3001/persons")
-      .then(response => {
-        setPersons(response.data)
-        console.log("JSON data fetched from localhost")})
+      personService.getAll()
+        .then(response => setPersons(response.data))
+      console.log(`Data fetched from ${personService.baseUrl}`)
     } catch (error) {
       console.log(error, error.message)
-    } 
-  }
-  
-  useEffect(() => {
-    fetchPersons() 
+    }     
   }, []);
 
   const addPerson = (event) => {
@@ -41,10 +37,8 @@ const App = () => {
       return;
     } else {
       try {
-        axios.post("http://localhost:3001/persons", newPerson)
-        .then(response => {
-          console.log(response)
-        })
+        personService.create(newPerson)
+          .then(response => console.log(response))    
       } catch (error) {
         console.log(error, error.message)
       }      
