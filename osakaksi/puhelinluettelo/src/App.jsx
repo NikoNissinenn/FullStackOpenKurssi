@@ -27,7 +27,8 @@ const App = () => {
 
     const newPerson = {
       name: newName,
-      number: newNumber
+      number: newNumber,
+      id: (Math.ceil(Math.random()*1000000)).toString()
     };
 
     if (persons.find((person) => person.name === newName)) {
@@ -38,15 +39,27 @@ const App = () => {
     } else {
       try {
         personService.create(newPerson)
-          .then(response => console.log(response))    
+          .then(response => console.log(response)) 
+        setPersons(persons.concat(newPerson));
+        setNewName("");
+        setNewNumber("");    
       } catch (error) {
         console.log(error, error.message)
-      }      
+      }    
     }
+  }
 
-    setPersons(persons.concat(newPerson));
-    setNewName("");
-    setNewNumber("");
+  const removePerson = (id, name) => {
+    try {
+      if (window.confirm(`Delete ${name}?`)) {
+        personService.deletePerson(id)
+          .then((response) => {
+            setPersons(persons.filter((person) => person.id !== id))
+            console.log(response)
+          })}
+    } catch (error) {
+      console.log(error, error.message)
+    } 
   }
 
   const handlePersonChange = (event) => {
@@ -84,7 +97,7 @@ const App = () => {
         handleNumberChange={handleNumberChange} 
       />
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} />
+      <Persons filteredPersons={filteredPersons} removePerson={removePerson} />
     </div>
   )
 }
