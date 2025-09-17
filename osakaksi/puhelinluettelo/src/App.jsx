@@ -24,20 +24,36 @@ const App = () => {
 
   const addPerson = (event) => {
     event.preventDefault();
-
-    const newPerson = {
-      name: newName,
-      number: newNumber,
-      id: (Math.ceil(Math.random()*1000000)).toString()
-    };
-
-    if (persons.find((person) => person.name === newName)) {
-      alert(`${newName} is already in the phonebook`);
-      setNewName("");
-      setNewNumber("");
-      return;
+    const existingPerson = persons.find((person) => person.name === newName)
+    
+    if (existingPerson) {
+      const confirmmessage = window.confirm(`${newName} is already added to phonebook, replace number with new one?`);
+        if (confirmmessage === true) {
+          try {
+            const updatedPerson = { 
+              name: existingPerson.name,
+              number: newNumber,
+              id: existingPerson.id
+            }
+            personService.update(updatedPerson.id, updatedPerson)
+              .then(response => {              
+                setPersons(persons.map((person) => 
+                  person.id === updatedPerson.id ? response.data : person
+                ))
+                console.log(response)})
+            setNewName("");
+            setNewNumber("");            
+          } catch (error) {
+            console.log(error, error.message)
+          }          
+        }
     } else {
       try {
+        const newPerson = {
+          name: newName,
+          number: newNumber,
+          id: (Math.ceil(Math.random()*1000000)).toString()
+        };
         personService.create(newPerson)
           .then(response => console.log(response)) 
         setPersons(persons.concat(newPerson));
@@ -72,14 +88,7 @@ const App = () => {
 
   const handleFilterChange = (event) => {
     setNewFilter(event.target.value);
-  }
-
-  const filteredPersons = newFilter ?
-      persons.filter((person) => (
-        person.name.toLowerCase().includes(newFilter.toLowerCase())
-      ))
-      : persons
-  
+  }  
 
   return (
     <div>
@@ -97,7 +106,7 @@ const App = () => {
         handleNumberChange={handleNumberChange} 
       />
       <h3>Numbers</h3>
-      <Persons filteredPersons={filteredPersons} removePerson={removePerson} />
+      <Persons persons={persons} newFilter={newFilter} removePerson={removePerson} />
     </div>
   )
 }
