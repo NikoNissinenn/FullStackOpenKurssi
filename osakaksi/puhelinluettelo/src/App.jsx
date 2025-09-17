@@ -4,19 +4,21 @@ import Persons from './components/Persons'
 import Filter from './components/Filter'
 import axios from "axios"
 import personService from "./services/persons"
+import Notification from './components/Notification'
 
 const App = () => {
   const [persons, setPersons] = useState([]) 
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState("")
   const [newFilter, setNewFilter] = useState("")
+  const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
 
   // npx json-server --port 3001 db.json
   useEffect(() => {
     try {
       personService.getAll()
         .then(response => setPersons(response.data))
-      console.log(`Data fetched from ${personService.baseUrl}`)
     } catch (error) {
       console.log(error, error.message)
     }     
@@ -42,9 +44,17 @@ const App = () => {
                 ))
                 console.log(response)})
             setNewName("");
-            setNewNumber("");            
+            setNewNumber("");
+            setSuccessMessage(`Person '${updatedPerson.name}' was updated in the server`)
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)           
           } catch (error) {
             console.log(error, error.message)
+            setErrorMessage(`Person '${existingPerson.name}' was not updated in the server, something went wrong`)
+            setTimeout(() => {
+              setErrorMessage(null)
+            }, 5000)
           }          
         }
     } else {
@@ -58,9 +68,17 @@ const App = () => {
           .then(response => console.log(response)) 
         setPersons(persons.concat(newPerson));
         setNewName("");
-        setNewNumber("");    
+        setNewNumber("");
+        setSuccessMessage(`Person '${newPerson.name}' was added to the server`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)    
       } catch (error) {
         console.log(error, error.message)
+        setErrorMessage(`Person '${newPerson.name}' was not added to the server, something went wrong`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
       }    
     }
   }
@@ -72,9 +90,17 @@ const App = () => {
           .then((response) => {
             setPersons(persons.filter((person) => person.id !== id))
             console.log(response)
+            setSuccessMessage(`Person '${name}' was removed from the server`)
+            setTimeout(() => {
+              setSuccessMessage(null)
+            }, 5000)
           })}
     } catch (error) {
       console.log(error, error.message)
+      setErrorMessage(`Person '${name}' was not removed from the server, something went wrong`)
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
     } 
   }
 
@@ -93,6 +119,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification errorMessage={errorMessage} successMessage={successMessage}/>
       <Filter 
         newFilter={newFilter}
         handleFilterChange={handleFilterChange}
