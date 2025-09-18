@@ -15,13 +15,22 @@ const App = () => {
   const [successMessage, setSuccessMessage] = useState(null)
 
   // npx json-server --port 3001 db.json
-  useEffect(() => {
-    try {
-      personService.getAll()
-        .then(response => setPersons(response.data))
-    } catch (error) {
-      console.log(error, error.message)
-    }     
+  useEffect(() => {    
+    personService.getAll()
+      .then(response => {
+        if (response.data.length > 0) {
+          setPersons(response.data)
+          setSuccessMessage(`Fetched data from ${personService.baseUrl}`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)  
+        } 
+      })
+      .catch(error => {
+        setErrorMessage(`Failed to fetch data from ${personService.baseUrl}`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)})       
   }, []);
 
   const addPerson = (event) => {
@@ -31,77 +40,72 @@ const App = () => {
     if (existingPerson) {
       const confirmmessage = window.confirm(`${newName} is already added to phonebook, replace number with new one?`);
         if (confirmmessage === true) {
-          try {
-            const updatedPerson = { 
-              name: existingPerson.name,
-              number: newNumber,
-              id: existingPerson.id
-            }
-            personService.update(updatedPerson.id, updatedPerson)
-              .then(response => {              
-                setPersons(persons.map((person) => 
-                  person.id === updatedPerson.id ? response.data : person
-                ))
-                console.log(response)})
-            setNewName("");
-            setNewNumber("");
-            setSuccessMessage(`Person '${updatedPerson.name}' was updated in the server`)
-            setTimeout(() => {
-              setSuccessMessage(null)
-            }, 5000)           
-          } catch (error) {
-            console.log(error, error.message)
-            setErrorMessage(`Person '${existingPerson.name}' was not updated in the server, something went wrong`)
+          const updatedPerson = { 
+            name: existingPerson.name,
+            number: newNumber,
+            id: existingPerson.id
+          }
+          personService.update(updatedPerson.id, updatedPerson)
+            .then(response => {            
+              setPersons(persons.map((person) => 
+                person.id === updatedPerson.id ? response.data : person
+              ))                
+          })
+          .catch(error => {                
+            setErrorMessage(`Person '${updatedPerson.name}' was not updated in the server, it has already been removed`)
             setTimeout(() => {
               setErrorMessage(null)
             }, 5000)
-          }          
+            setPersons(persons.filter((person) => person.id !== updatedPerson.id))                              
+          })
+          setNewName("");
+          setNewNumber("");
+          setSuccessMessage(`Person '${updatedPerson.name}' was updated in the server`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)          
         }
-    } else {
-      try {
-        const newPerson = {
-          name: newName,
-          number: newNumber,
-          id: (Math.ceil(Math.random()*1000000)).toString()
-        };
-        personService.create(newPerson)
-          .then(response => console.log(response)) 
+    } else {      
+      const newPerson = {
+        name: newName,
+        number: newNumber,
+        id: (Math.ceil(Math.random()*1000000)).toString()
+      };
+      personService.create(newPerson)
+        .catch(error => {
+          setErrorMessage(`Person '${newPerson.name}' was not added to the server, something went wrong`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)}
+        ) 
         setPersons(persons.concat(newPerson));
         setNewName("");
         setNewNumber("");
         setSuccessMessage(`Person '${newPerson.name}' was added to the server`)
         setTimeout(() => {
           setSuccessMessage(null)
-        }, 5000)    
-      } catch (error) {
-        console.log(error, error.message)
-        setErrorMessage(`Person '${newPerson.name}' was not added to the server, something went wrong`)
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
-      }    
+        }, 5000)          
     }
   }
 
   const removePerson = (id, name) => {
-    try {
-      if (window.confirm(`Delete ${name}?`)) {
-        personService.deletePerson(id)
-          .then((response) => {
-            setPersons(persons.filter((person) => person.id !== id))
-            console.log(response)
-            setSuccessMessage(`Person '${name}' was removed from the server`)
-            setTimeout(() => {
-              setSuccessMessage(null)
-            }, 5000)
-          })}
-    } catch (error) {
-      console.log(error, error.message)
-      setErrorMessage(`Person '${name}' was not removed from the server, something went wrong`)
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    } 
+    if (window.confirm(`Delete ${name}?`)) {
+      personService.deletePerson(id)
+        .then((response) => {
+          setPersons(persons.filter((person) => person.id !== id))
+          setSuccessMessage(`Person '${name}' was removed from the server`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)
+        })
+        .catch(error => {
+          setErrorMessage(`Person '${name}' has already been removed from the server`)
+          setTimeout(() => {
+            setErrorMessage(null)
+          }, 5000)
+          setPersons(persons.filter((person) => person.id !== id))
+        })        
+      }      
   }
 
   const handlePersonChange = (event) => {
