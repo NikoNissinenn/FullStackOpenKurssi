@@ -59,14 +59,36 @@ app.get(`/api/persons/:id`, (request, response) => {
 app.delete('/api/persons/:id', (request, response) => {
   const id = request.params.id
   persons = persons.filter(person => person.id !== id)
-
   response.status(204).end()
 })
 
+
 app.post('/api/persons', (request, response) => {
   const person = request.body
-  person.id = Math.ceil(Math.random() * 100000).toFixed(0)
-  console.log(person)
+
+  if (!person.name) {
+    return response.status(400).json({ 
+      error: 'Name is missing' 
+    })
+  }
+  if (!person.number) {
+    return response.status(400).json({ 
+      error: 'Number is missing' 
+    })
+  }
+
+  persons.map((p) => {
+    if (p.name === person.name) {
+      return response.status(400).json({ 
+      error: 'Name must be unique. Duplicate name issue' 
+    })
+    }
+    if (p.id === person.id) {
+      return response.status(400).json({ 
+      error: 'ID must be unique. Duplicate ID issue' 
+    })
+    }    
+  })
   response.json(person)
 })
 
