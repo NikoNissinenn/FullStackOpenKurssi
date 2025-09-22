@@ -2,7 +2,7 @@ import React from 'react';
 import axios from "axios"
 import { useState, useEffect } from "react"
 
-const CountryDetails = ({country}) => {
+const CountryDetails = ({country, setSelectedCountry}) => {
   const [countryData, setCountryData] = useState({})
   const [loading, setLoading] = useState(true)
 
@@ -29,6 +29,7 @@ const CountryDetails = ({country}) => {
 
     return (
       <div>
+        <button onClick={() => setSelectedCountry(null)}>Return</button>
         <h1>{countryName}</h1>
         <p>Capital: {countryCapital}</p>
         <p>Area: {countryArea}</p>
