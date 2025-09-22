@@ -4,7 +4,11 @@ const PORT = 3001
 const morgan = require("morgan")
 
 app.use(express.json())
-app.use(morgan('tiny'))
+app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+
+morgan.token('body', function getId (req) {
+  return JSON.stringify(req.body)
+})
 
 let persons = [
     { 
@@ -66,18 +70,28 @@ app.delete('/api/persons/:id', (request, response) => {
 
 
 app.post('/api/persons', (request, response) => {
-  const person = request.body
+  const body = request.body
 
-  if (!person.name) {
+  if (!body.name) {
     return response.status(400).json({ 
       error: 'Name is missing' 
     })
   }
-  if (!person.number) {
+  if (!body.number) {
     return response.status(400).json({ 
       error: 'Number is missing' 
     })
   }
+
+  const randomId = () => {
+    return Math.ceil(Math.random()*1000000).toFixed(0)
+  }
+
+  const person = {
+    id: randomId(),
+    name: body.name,
+    number: body.number
+  }  
 
   persons.map((p) => {
     if (p.name === person.name) {
@@ -91,6 +105,7 @@ app.post('/api/persons', (request, response) => {
     })
     }    
   })
+  persons = persons.concat(person)
   response.json(person)
 })
 
