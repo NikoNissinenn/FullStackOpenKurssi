@@ -2,6 +2,8 @@ const express = require("express")
 const app = express()
 const PORT = 3001
 
+app.use(express.json())
+
 let persons = [
     { 
       "id": "1",
@@ -59,6 +61,13 @@ app.delete('/api/persons/:id', (request, response) => {
   persons = persons.filter(person => person.id !== id)
 
   response.status(204).end()
+})
+
+app.post('/api/persons', (request, response) => {
+  const person = request.body
+  person.id = Math.ceil(Math.random() * 100000).toFixed(0)
+  console.log(person)
+  response.json(person)
 })
 
 app.listen(PORT)
