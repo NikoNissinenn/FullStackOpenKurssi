@@ -7,6 +7,7 @@ const cors = require('cors')
 app.use(cors())
 app.use(express.json())
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
+app.use(express.static('dist'))
 
 morgan.token('body', function getId (req) {
   return JSON.stringify(req.body)
