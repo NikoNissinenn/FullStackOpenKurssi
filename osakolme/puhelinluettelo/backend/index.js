@@ -89,30 +89,14 @@ app.post('/api/persons', (request, response) => {
     })
   }
 
-  const randomId = () => {
-    return Math.ceil(Math.random()*1000000).toFixed(0)
-  }
-
-  const person = {
-    id: randomId(),
+  const person = new Person({
     name: body.name,
     number: body.number
-  }  
+  })  
 
-  persons.map((p) => {
-    if (p.name === person.name) {
-      return response.status(400).json({ 
-      error: 'Name must be unique. Duplicate name issue' 
-    })
-    }
-    if (p.id === person.id) {
-      return response.status(400).json({ 
-      error: 'ID must be unique. Duplicate ID issue' 
-    })
-    }    
+  person.save().then((savedPerson) => {
+    response.json(savedPerson)
   })
-  persons = persons.concat(person)
-  response.json(person)
 })
 
 app.listen(process.env.PORT, () => {
