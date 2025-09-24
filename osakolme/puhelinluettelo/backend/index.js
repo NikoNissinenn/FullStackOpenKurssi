@@ -1,9 +1,9 @@
-const express = require("express")
+const express = require('express')
 const app = express()
-const morgan = require("morgan")
+const morgan = require('morgan')
 const cors = require('cors')
-const Person = require("./models/person")
-require("dotenv").config()
+const Person = require('./models/person')
+require('dotenv').config()
 
 app.use(cors())
 app.use(express.json())
@@ -30,17 +30,17 @@ const errorHandler = (error, request, response, next) => {
 }
 
 
-app.get("/", (request, response) => {
+app.get('/', (request, response) => {
   response.send('<h1> Hello World! </h1>')
 })
 
-app.get("/api/persons", (request, response, next) => {
+app.get('/api/persons', (request, response, next) => {
   Person.find({}).then((persons) => {
     response.json(persons)
   }).catch(error => next(error))
 })
 
-app.get("/info", (request, response, next) => {
+app.get('/info', (request, response, next) => {
   Person.find({}).then((persons) => {
     response.send(`
         <p>
@@ -49,12 +49,12 @@ app.get("/info", (request, response, next) => {
           ${new Date()}
         </p>
         `
-      )
-  })  
-  .catch(error => next(error))
+    )
+  })
+    .catch(error => next(error))
 })
 
-app.get(`/api/persons/:id`, (request, response, next) => {
+app.get('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   if (!id) {
     return response.status(400).end()
@@ -64,13 +64,13 @@ app.get(`/api/persons/:id`, (request, response, next) => {
     .then((result) => {
       response.json(result)
       response.status(200).end()
-  }).catch(error => next(error))
+    }).catch(error => next(error))
 })
 
 app.delete('/api/persons/:id', (request, response, next) => {
   const id = request.params.id
   Person.findByIdAndDelete(id)
-    .then((result) => {
+    .then(() => {
       response.status(204).end()
     }).catch(error => next(error))
 })
@@ -80,13 +80,13 @@ app.post('/api/persons', (request, response, next) => {
   const { name, number } = request.body
 
   if (!name) {
-    return response.status(400).json({ 
-      error: 'Name is missing' 
+    return response.status(400).json({
+      error: 'Name is missing'
     })
   }
   if (!number) {
-    return response.status(400).json({ 
-      error: 'Number is missing' 
+    return response.status(400).json({
+      error: 'Number is missing'
     })
   }
 
@@ -115,18 +115,18 @@ app.put('/api/persons/:id', (request, response, next) => {
     { name, number },
     { new: true, runValidators: true, context: 'query' }
   ).then(person => {
-      if (!person) {
-        return response.status(404).end()
-      }
+    if (!person) {
+      return response.status(404).end()
+    }
 
-      person.name = name
-      person.number = number
+    person.name = name
+    person.number = number
 
-      return person.save().then((updatedPerson) => {
-        response.json(updatedPerson)
-        response.status(201)
-      })
+    return person.save().then((updatedPerson) => {
+      response.json(updatedPerson)
+      response.status(201)
     })
+  })
     .catch(error => next(error))
 })
 
