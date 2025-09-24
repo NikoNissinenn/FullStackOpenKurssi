@@ -21,7 +21,10 @@ const unknownEndpoint = (request, response) => {
 const errorHandler = (error, request, response, next) => {
   console.error(error.message)
   if (error.name === 'CastError') {
-    return response.status(400).send({ error: 'malformatted id' })
+    return response.status(400).send({ error: 'Malformatted id' })
+  }
+  else if (error.name === 'ValidationError') {
+    return response.status(400).send({ error: error.message })
   }
   next(error)
 }
@@ -74,23 +77,29 @@ app.delete('/api/persons/:id', (request, response, next) => {
 
 
 app.post('/api/persons', (request, response, next) => {
-  const body = request.body
+  const { name, number } = request.body
 
-  if (!body.name) {
+  if (!name) {
     return response.status(400).json({ 
       error: 'Name is missing' 
     })
   }
-  if (!body.number) {
+  if (!number) {
     return response.status(400).json({ 
       error: 'Number is missing' 
     })
   }
 
   const person = new Person({
-    name: body.name,
-    number: body.number
-  })  
+    name: name,
+    number: number
+  })
+
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  )
 
   person.save().then((savedPerson) => {
     response.json(savedPerson)
@@ -99,20 +108,23 @@ app.post('/api/persons', (request, response, next) => {
 })
 
 app.put('/api/persons/:id', (request, response, next) => {
-  const body = request.body
+  const { name, number } = request.body
 
-  Person.findById(request.params.id)
-    .then(person => {
-
+  Person.findByIdAndUpdate(
+    request.params.id,
+    { name, number },
+    { new: true, runValidators: true, context: 'query' }
+  ).then(person => {
       if (!person) {
         return response.status(404).end()
       }
 
-      person.name = body.name
-      person.number = body.number
+      person.name = name
+      person.number = number
 
       return person.save().then((updatedPerson) => {
         response.json(updatedPerson)
+        response.status(201)
       })
     })
     .catch(error => next(error))

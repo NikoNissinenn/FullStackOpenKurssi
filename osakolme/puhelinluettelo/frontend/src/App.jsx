@@ -52,7 +52,7 @@ const App = () => {
               ))                
           })
           .catch(error => {                
-            setErrorMessage(`Person '${updatedPerson.name}' was not updated in the server, it has already been removed`)
+            setErrorMessage(error.response.data.error)
             setTimeout(() => {
               setErrorMessage(null)
             }, 5000)
@@ -72,20 +72,22 @@ const App = () => {
         number: newNumber        
       };
       personService.create(newPerson)
+        .then((addedPerson) => {
+          setPersons(persons.concat(addedPerson));
+          setSuccessMessage(`Person '${addedPerson.name}' was added to the server`)
+          setTimeout(() => {
+            setSuccessMessage(null)
+          }, 5000)  
+        })
         .catch(error => {
-          setErrorMessage(`Person '${newPerson.name}' was not added to the server, something went wrong`)
+          setErrorMessage(error.response.data.error)
           setTimeout(() => {
             setErrorMessage(null)
-          }, 5000)}
-        ) 
-        setPersons(persons.concat(newPerson));
-        setNewName("");
-        setNewNumber("");
-        setSuccessMessage(`Person '${newPerson.name}' was added to the server`)
-        setTimeout(() => {
-          setSuccessMessage(null)
-        }, 5000)          
+          }, 5000)}          
+        )                
     }
+    setNewName("");
+    setNewNumber("");
   }
 
   const removePerson = (id, name) => {
@@ -99,7 +101,7 @@ const App = () => {
           }, 5000)
         })
         .catch(error => {
-          setErrorMessage(`Person '${name}' has already been removed from the server`)
+          setErrorMessage(error.response.data.error)
           setTimeout(() => {
             setErrorMessage(null)
           }, 5000)
