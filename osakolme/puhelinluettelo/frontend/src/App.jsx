@@ -55,8 +55,7 @@ const App = () => {
             setErrorMessage(error.response.data.error)
             setTimeout(() => {
               setErrorMessage(null)
-            }, 5000)
-            setPersons(persons.filter((person) => person.id !== updatedPerson.id))                              
+            }, 5000)                             
           })
           setNewName("");
           setNewNumber("");
@@ -73,8 +72,8 @@ const App = () => {
       };
       personService.create(newPerson)
         .then((addedPerson) => {
-          setPersons(persons.concat(addedPerson));
-          setSuccessMessage(`Person '${addedPerson.name}' was added to the server`)
+          setPersons(persons.concat(newPerson));
+          setSuccessMessage(`Person '${newPerson.name}' was added to the server`)
           setTimeout(() => {
             setSuccessMessage(null)
           }, 5000)  
