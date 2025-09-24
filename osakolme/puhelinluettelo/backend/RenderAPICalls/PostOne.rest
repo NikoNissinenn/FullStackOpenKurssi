@@ -2,6 +2,6 @@ POST https://puhelinluettelo-yn7q.onrender.com/api/persons
 Content-Type: application/json
 
 {  
-  "name": "Test Name", 
-  "number": "12-23-345657"
+  "name": "RenderPOST test", 
+  "number": "12-3456578"
 }
