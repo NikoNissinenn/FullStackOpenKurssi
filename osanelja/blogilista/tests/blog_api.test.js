@@ -101,6 +101,27 @@ describe('Bloglist POST-method tests', () => {
   })
 })
 
+
+describe('Bloglist DELETE-method tests', () => {
+  test('Valid blog can be deleted', async () => {
+    await api
+      .delete(`/api/blogs/${blogHelper.initialBlogs[0]._id}`)
+      .expect(204)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length - 1))
+  })
+
+  test('Invalid blog returns status code 400 for malformatted ID', async () => {
+    await api
+      .delete('/api/blogs/invalidID')
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, blogHelper.initialBlogs.length)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
