@@ -69,7 +69,6 @@ describe('Bloglist POST-method tests', () => {
   })
 
   test('Missing Likes- field will result to default value of 0', async () => {
-
     await api
       .post('/api/blogs')
       .send(blogHelper.missingLikesBlog)
@@ -79,6 +78,26 @@ describe('Bloglist POST-method tests', () => {
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length + 1))
     assert.deepStrictEqual(response.body[2].likes, 0)
+  })
+
+  test('Missing Title- field will result to response 400', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blogHelper.missingTitleBlog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, blogHelper.initialBlogs.length)
+  })
+
+  test('Missing URL- field will result to response 400', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blogHelper.missingUrlBlog)
+      .expect(400)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, blogHelper.initialBlogs.length)
   })
 })
 

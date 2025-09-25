@@ -29,8 +29,24 @@ const missingLikesBlog = {
   likes: ""
 }
 
+const missingTitleBlog = {
+  title: "",
+  author: "Test author",
+  url: "https://example.com/",
+  likes: 8
+}
+
+const missingUrlBlog = {
+  title: "Test title",
+  author: "Test author",
+  url: "",
+  likes: 8
+}
+
 module.exports = {
   initialBlogs,
   newBlog,
-  missingLikesBlog
+  missingLikesBlog,
+  missingTitleBlog,
+  missingUrlBlog
 }

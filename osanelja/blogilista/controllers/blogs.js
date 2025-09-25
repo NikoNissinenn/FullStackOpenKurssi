@@ -8,7 +8,22 @@ blogsRouter.get('/', async (request, response) => {
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
-  if (!body.likes) {body.likes = 0}  
+
+  if (!body.likes) {
+    body.likes = 0
+  } 
+
+  if (!body.title) {
+    return response.status(400).json({
+      error: 'Title- field is missing in blog'
+    })
+  }
+
+  if (!body.url) {
+    return response.status(400).json({
+      error: 'URL- field is missing in blog'
+    })
+  }
 
   const blog = new Blog({
     title: body.title,
