@@ -24,6 +24,7 @@ describe('Total likes', () => {
   })
 })
 
+
 describe('Favourite Blog', () => {
   test('Of empty list returns null', () => {
     const result = listHelper.favoriteBlog([])
@@ -36,5 +37,21 @@ describe('Favourite Blog', () => {
   test('Of a bigger list is calculated right', () => {
     const result = listHelper.favoriteBlog(listHelper.premadeBlogs)
     assert.strictEqual(result, listHelper.premadeBlogs[2])
+  })
+})
+
+
+describe('Most Blogs', () => {
+  test('Of empty list returns null', () => {
+    const result = listHelper.mostBlogs([])
+    assert.strictEqual(result, null)
+  })
+  test('When list has only one blog equals the given blog', () => {
+    const result = listHelper.mostBlogs(listHelper.onlyOneBlog)
+    assert.deepStrictEqual(result, {author: listHelper.onlyOneBlog[0].author, blogs: 1})
+  })
+  test('Of a bigger list is calculated right', () => {
+    const result = listHelper.mostBlogs(listHelper.premadeBlogs)
+    assert.deepStrictEqual(result, {author: listHelper.premadeBlogs[4].author, blogs: 3})
   })
 })
