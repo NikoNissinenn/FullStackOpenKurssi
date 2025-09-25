@@ -33,6 +33,12 @@ describe('Bloglist GET-method tests', () => {
     const contents = response.body.map(e => e.author)    
     assert(contents.includes("Edsger W. Dijkstra"))
   })
+
+  test('Returned blog indentifier is "id" instead "_id"', async () => {
+    const response = await api.get('/api/blogs')
+    
+    assert.deepStrictEqual(response.body[0].id, blogHelper.initialBlogs[0]._id)
+  })
 })
 
 after(async () => {
