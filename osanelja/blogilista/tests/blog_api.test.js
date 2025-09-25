@@ -67,6 +67,19 @@ describe('Bloglist POST-method tests', () => {
     assert.deepStrictEqual(response.body[2].url, blogHelper.newBlog.url)
     assert.deepStrictEqual(response.body[2].likes, blogHelper.newBlog.likes)
   })
+
+  test('Missing Likes- field will result to default value of 0', async () => {
+
+    await api
+      .post('/api/blogs')
+      .send(blogHelper.missingLikesBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length + 1))
+    assert.deepStrictEqual(response.body[2].likes, 0)
+  })
 })
 
 after(async () => {
