@@ -41,6 +41,34 @@ describe('Bloglist GET-method tests', () => {
   })
 })
 
+
+describe('Bloglist POST-method tests', () => {
+  test('New blog can be posted', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blogHelper.newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length + 1))
+  })
+
+  test('New blog content is properly saved and retrieved', async () => {
+    await api
+      .post('/api/blogs')
+      .send(blogHelper.newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    assert.deepStrictEqual(response.body[2].title, blogHelper.newBlog.title)
+    assert.deepStrictEqual(response.body[2].author, blogHelper.newBlog.author)
+    assert.deepStrictEqual(response.body[2].url, blogHelper.newBlog.url)
+    assert.deepStrictEqual(response.body[2].likes, blogHelper.newBlog.likes)
+  })
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
