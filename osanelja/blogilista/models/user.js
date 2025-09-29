@@ -1,13 +1,20 @@
 const mongoose = require('mongoose')
 
 const userSchema = new mongoose.Schema({
-  username: String,
+  username: {
+    type: String,
+    minlength: [3, 'Username must be at least 3 characters long'],
+    required: [true, 'Missing username'],
+    unique: true
+  },
   name: String,
-  passwordHash: String,
+  passwordHash: {
+    type: String
+  },
   blogs: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Note'
+      ref: 'Blog'
     }
   ],
 }, { collection: 'users' })
