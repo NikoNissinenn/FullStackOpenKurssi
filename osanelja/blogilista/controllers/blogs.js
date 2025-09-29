@@ -11,7 +11,7 @@ blogsRouter.post('/', async (request, response) => {
 
   if (!body.likes) {
     body.likes = 0
-  } 
+  }
 
   if (!body.title) {
     return response.status(400).json({
@@ -40,6 +40,29 @@ blogsRouter.post('/', async (request, response) => {
 blogsRouter.delete('/:id', async (request, response) => {
   await Blog.findByIdAndDelete(request.params.id)
   response.status(204).end()
+})
+
+
+blogsRouter.put('/:id', async (request, response) => {
+  if (!request.body) {
+    return response.status(400).json({
+      error: 'Body is missing in blog'
+    })
+  }
+
+  if (!request.params.id) {
+    return response.status(400).json({
+      error: 'ID is invalid in blog'
+    })
+  }
+
+  const updatedBlog = await Blog.findByIdAndUpdate(
+    request.params.id,
+    request.body,
+    { new: true, runValidators: true, context: 'query' }
+  )
+
+  response.status(200).json(updatedBlog)
 })
 
 module.exports = blogsRouter

@@ -1,0 +1,9 @@
+PUT http://localhost:3003/api/blogs/68d4e1325f6405f1fc93b666
+Content-Type: application/json
+
+{
+  "title": "REST PUT-test",
+  "author": "Niko Nissinen",
+  "url": "https://example.com",
+  "likes": 15
+}
