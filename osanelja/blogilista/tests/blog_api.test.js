@@ -43,9 +43,16 @@ describe('Bloglist GET-method tests', () => {
 
 
 describe('Bloglist POST-method tests', () => {
+  let header
+
+  beforeEach(async () => {
+    header = await blogHelper.userLogin()
+  })
+
   test('New blog can be posted', async () => {
     await api
       .post('/api/blogs')
+      .set('Authorization', header)
       .send(blogHelper.newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -54,9 +61,22 @@ describe('Bloglist POST-method tests', () => {
     assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length + 1))
   })
 
+  test('Error code 401 for invalid authorization', async () => {
+    await api
+      .post('/api/blogs')
+      .set('Authorization', 'invalidToken')
+      .send(blogHelper.newBlog)
+      .expect(401)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api.get('/api/blogs')
+    assert.strictEqual(response.body.length, blogHelper.initialBlogs.length)
+  })
+
   test('New blog content is properly saved and retrieved', async () => {
     await api
       .post('/api/blogs')
+      .set('Authorization', header)
       .send(blogHelper.newBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -71,6 +91,7 @@ describe('Bloglist POST-method tests', () => {
   test('Missing Likes- field will result to default value of 0', async () => {
     await api
       .post('/api/blogs')
+      .set('Authorization', header)
       .send(blogHelper.missingLikesBlog)
       .expect(201)
       .expect('Content-Type', /application\/json/)
@@ -83,6 +104,7 @@ describe('Bloglist POST-method tests', () => {
   test('Missing Title- field will result to response 400', async () => {
     await api
       .post('/api/blogs')
+      .set('Authorization', header)
       .send(blogHelper.missingTitleBlog)
       .expect(400)
 
@@ -93,6 +115,7 @@ describe('Bloglist POST-method tests', () => {
   test('Missing URL- field will result to response 400', async () => {
     await api
       .post('/api/blogs')
+      .set('Authorization', header)
       .send(blogHelper.missingUrlBlog)
       .expect(400)
 
@@ -103,22 +126,69 @@ describe('Bloglist POST-method tests', () => {
 
 
 describe('Bloglist DELETE-method tests', () => {
+  let header
+
+  beforeEach(async () => {
+    header = await blogHelper.userLogin()
+  })
+
   test('Valid blog can be deleted', async () => {
+    const newBlog = {
+      title: 'Temp blog to delete',
+      author: 'Someone',
+      url: 'http://delete.me',
+      likes: 1,
+    }
+
+    const postResponse = await api
+      .post('/api/blogs')
+      .set('Authorization', header)
+      .send(newBlog)
+      .expect(201)
+
+    const blogId = postResponse.body.id
+
     await api
-      .delete(`/api/blogs/${blogHelper.initialBlogs[0]._id}`)
+      .delete(`/api/blogs/${blogId}`)
+      .set('Authorization', header)
       .expect(204)
 
-    const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length - 1))
+    const blogsAfter = await api.get('/api/blogs')
+    const deleted = blogsAfter.body.find(b => b.id === blogId)
+
+    assert.strictEqual(deleted, undefined)
   })
 
   test('Invalid blog returns status code 400 for malformatted ID', async () => {
     await api
       .delete('/api/blogs/invalidID')
+      .set('Authorization', header)
       .expect(400)
 
     const response = await api.get('/api/blogs')
     assert.strictEqual(response.body.length, blogHelper.initialBlogs.length)
+  })
+
+  test('Error code 401 for invalid authorization', async () => {
+    const newBlog = {
+      title: 'Temp blog to delete',
+      author: 'Someone',
+      url: 'http://delete.me',
+      likes: 1,
+    }
+
+    const postResponse = await api
+      .post('/api/blogs')
+      .set('Authorization', header)
+      .send(newBlog)
+      .expect(201)
+
+    const blogId = postResponse.body.id
+
+    await api
+      .delete(`/api/blogs/${blogId}`)
+      .set('Authorization', 'invalidAuthorization')
+      .expect(401)
   })
 })
 
