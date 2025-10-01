@@ -3,6 +3,7 @@ import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
+import BlogCreationForm from './components/BlogCreationForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -15,6 +16,7 @@ const App = () => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const [blogformVisible, setBlogformVisible] = useState(false)
 
   useEffect(() => {
     blogService.getAll()
@@ -95,6 +97,7 @@ const App = () => {
       setAuthor('')
       setUrl('')
       setNewBlog('')
+      setBlogformVisible(false)
       setSuccessMessage(`New blog ${createdBlog.title} by ${createdBlog.author}`)
       setTimeout(() => {
         setSuccessMessage(null)
@@ -136,62 +139,43 @@ const App = () => {
     </form>
   )
 
-  const blogForm = () => (
-    <div>
-      <p>
-        {`${user.username} logged in`}
-        <button onClick={handleLogout}>Logout</button>
-      </p>
-      <h2>Create new blog</h2>
+  const blogForm = () => {
+    const hideWhenVisible = { display: blogformVisible ? 'none' : '' }
+    const showWhenVisible = { display: blogformVisible ? '' : 'none' }
 
-      <form onSubmit={handleNewBlog}>
-        <div>
-          <label>
-            Title:
-            <input
-              id='titlefield'
-              type="text"
-              value={title}
-              onChange={({ target }) => setTitle(target.value)}
-            />
-          </label>
-        </div>
-
-        <div>
-          <label>            
-            Author:
-            <input
-              id='authorfield'
-              type="text"
-              value={author}
-              onChange={({ target }) => setAuthor(target.value)}
-            />
-          </label>
-        </div>
-
-        <div>
-          <label>
-            Url:
-            <input
-              id='urlfield'
-              type="text"
-              value={url}
-              onChange={({ target }) => setUrl(target.value)}
-            />
-          </label>
-        </div>
-        <button type="submit">Create</button>
-      </form>
-
+    return (
       <div>
-        <ul>
-          {blogs.map(blog =>
-            <Blog key={blog.id} blog={blog} />
-          )}
-        </ul>
+        <p>
+          {`${user.username} logged in`}
+          <button onClick={handleLogout}>Logout</button>
+        </p>
+
+        <div style={hideWhenVisible}>
+          <button onClick={() => setBlogformVisible(true)}>Create new blog</button>
+        </div>
+
+        <div style={showWhenVisible}>
+          <BlogCreationForm 
+            handleNewBlog={handleNewBlog}
+            title={title}
+            setTitle={setTitle}
+            author={author}
+            setAuthor={setAuthor}
+            url={url}
+            setUrl={setUrl}
+          />
+          <button onClick={() => setBlogformVisible(false)}>Cancel</button>
+        </div>
+        <div>
+          <ul>
+            {blogs.map(blog =>
+              <Blog key={blog.id} blog={blog} />
+            )}
+          </ul>
+        </div>
       </div>
-    </div>
-  )
+    )
+  }
 
   return (
     <div>
