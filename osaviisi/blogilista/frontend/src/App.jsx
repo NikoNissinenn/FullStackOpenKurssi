@@ -2,10 +2,12 @@ import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Notification from './components/Notification'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
+  const [successMessage, setSuccessMessage] = useState(null)
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -21,12 +23,16 @@ const App = () => {
     )  
   }, [newBlog])
 
-   useEffect(() => {
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
+      setSuccessMessage(`Fetched user info from local storage`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
     }
   }, [])
 
@@ -42,9 +48,12 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-    } catch (error) {
-      console.log(error, error.message)
-      setErrorMessage('Wrong login credentials')
+      setSuccessMessage(`You have been logged in`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch {
+      setErrorMessage('Wrong username or password')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -59,8 +68,11 @@ const App = () => {
       )
       blogService.setToken(null)
       setUser(null)
-    } catch (error) {
-      console.log(error, error.message)
+      setSuccessMessage(`You have been logged out`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch {
       setErrorMessage('Something went wrong when login out')
       setTimeout(() => {
         setErrorMessage(null)
@@ -82,9 +94,13 @@ const App = () => {
       setTitle('')
       setAuthor('')
       setUrl('')
-    } catch (error) {
-      console.log(error, error.message)
-      setErrorMessage('Something went wrong when creating new blog')
+      setNewBlog('')
+      setSuccessMessage(`New blog ${createdBlog.title} by ${createdBlog.author}`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch {
+      setErrorMessage('Something went wrong when creating new blog. Fill all the fields')
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
@@ -126,6 +142,7 @@ const App = () => {
         {`${user.username} logged in`}
         <button onClick={handleLogout}>Logout</button>
       </p>
+      <h2>Create new blog</h2>
 
       <form onSubmit={handleNewBlog}>
         <div>
@@ -179,6 +196,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
+      <Notification errorMessage={errorMessage} successMessage={successMessage} />
       {!user && loginForm()}
       {user && blogForm()}
     </div>
