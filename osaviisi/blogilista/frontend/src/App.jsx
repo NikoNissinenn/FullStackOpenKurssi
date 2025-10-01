@@ -18,11 +18,23 @@ const App = () => {
     )  
   }, [])
 
+   useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON)
+      setUser(user)
+      blogService.setToken(user.token)
+    }
+  }, [])
+
   const handleLogin = async (event) => {
     event.preventDefault()
     try {
-      const user = await loginService.login({ username, password })     
-
+      const user = await loginService.login({ username, password }) 
+      
+      window.localStorage.setItem(
+        'loggedBlogAppUser', JSON.stringify(user)
+      )
       blogService.setToken(user.token)
       setUser(user)
       setUsername('')
@@ -36,6 +48,23 @@ const App = () => {
     }
   }
 
+  const handleLogout = async (event) => {
+    event.preventDefault()
+    try {
+      window.localStorage.removeItem(
+        'loggedBlogAppUser', JSON.stringify(user)
+      )
+      blogService.setToken(null)
+      setUser(null)
+    } catch (error) {
+      console.log(error, error.message)
+      setErrorMessage('Something went wrong when login out')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }
+  }
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
@@ -43,6 +72,7 @@ const App = () => {
         <label>
           Username
           <input
+            id='usernamefield'
             type="text"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
@@ -53,6 +83,7 @@ const App = () => {
         <label>
           Password
           <input
+            id='passwordfield'
             type="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
@@ -65,7 +96,10 @@ const App = () => {
 
   const blogForm = () => (
     <div>
-      <p>{`${user.username} logged in`}</p>
+      <p>
+        {`${user.username} logged in`}
+        <button onClick={handleLogout}>Logout</button>
+      </p>
       {blogs.map(blog =>
         <Blog key={blog.id} blog={blog} />
       )}
