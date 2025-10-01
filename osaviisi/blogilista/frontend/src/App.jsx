@@ -12,10 +12,6 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [newBlog, setNewBlog] = useState('')
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
   const [blogformVisible, setBlogformVisible] = useState(false)
 
   useEffect(() => {
@@ -23,7 +19,7 @@ const App = () => {
       .then(blogs =>
         setBlogs( blogs )
     )  
-  }, [newBlog])
+  }, [successMessage, errorMessage])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -82,34 +78,6 @@ const App = () => {
     }
   }
 
-  const handleNewBlog = async (event) => {
-    event.preventDefault()
-    try {
-      let createdBlog = {
-        title: title,
-        author: author,
-        url: url,
-        likes: 0
-      }
-      setNewBlog(createdBlog)
-      await blogService.create(createdBlog)
-      setTitle('')
-      setAuthor('')
-      setUrl('')
-      setNewBlog('')
-      setBlogformVisible(false)
-      setSuccessMessage(`New blog ${createdBlog.title} by ${createdBlog.author}`)
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
-    } catch {
-      setErrorMessage('Something went wrong when creating new blog. Fill all the fields')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
-    }
-  }
-
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
@@ -155,14 +123,10 @@ const App = () => {
         </div>
 
         <div style={showWhenVisible}>
-          <BlogCreationForm 
-            handleNewBlog={handleNewBlog}
-            title={title}
-            setTitle={setTitle}
-            author={author}
-            setAuthor={setAuthor}
-            url={url}
-            setUrl={setUrl}
+          <BlogCreationForm
+            setBlogformVisible={setBlogformVisible}
+            setErrorMessage={setErrorMessage}
+            setSuccessMessage={setSuccessMessage}
           />
           <button onClick={() => setBlogformVisible(false)}>Cancel</button>
         </div>
