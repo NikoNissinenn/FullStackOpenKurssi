@@ -9,7 +9,7 @@ const App = () => {
   const [blogs, setBlogs] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
-  const [username, setUsername] = useState('') 
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [blogformVisible, setBlogformVisible] = useState(false)
@@ -18,7 +18,7 @@ const App = () => {
     blogService.getAll()
       .then(blogs =>
         setBlogs( blogs )
-    )  
+      )
   }, [successMessage, errorMessage])
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      setSuccessMessage(`Fetched user info from local storage`)
+      setSuccessMessage('Fetched user info from local storage')
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
@@ -38,7 +38,7 @@ const App = () => {
     event.preventDefault()
     try {
       const user = await loginService.login({ username, password })
-      
+
       window.localStorage.setItem(
         'loggedBlogAppUser', JSON.stringify(user)
       )
@@ -46,7 +46,7 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setSuccessMessage(`You have been logged in`)
+      setSuccessMessage('You have been logged in')
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
@@ -66,7 +66,7 @@ const App = () => {
       )
       blogService.setToken(null)
       setUser(null)
-      setSuccessMessage(`You have been logged out`)
+      setSuccessMessage('You have been logged out')
       setTimeout(() => {
         setSuccessMessage(null)
       }, 5000)
@@ -96,14 +96,14 @@ const App = () => {
       setTimeout(() => {
         setErrorMessage(null)
       }, 5000)
-    }    
+    }
   }
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
   const handleBlogDelete = async (blog) => {
-    let text = `Remove blog '${blog.title}' by '${blog.author}' ?`;
-    if (confirm(text) == true) {
+    let text = `Remove blog '${blog.title}' by '${blog.author}' ?`
+    if (confirm(text) === true) {
       try {
         await blogService.remove(blog.id)
         setBlogs(blogs.filter(b => b.id !== blog.id))
@@ -175,7 +175,7 @@ const App = () => {
         <div>
           <ul>
             {sortedBlogs.map(blog =>
-              <Blog 
+              <Blog
                 key={blog.id}
                 blog={blog}
                 handleBlogUpdate={handleBlogUpdate}
