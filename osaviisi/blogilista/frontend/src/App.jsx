@@ -99,6 +99,8 @@ const App = () => {
     }    
   }
 
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
@@ -153,7 +155,7 @@ const App = () => {
         </div>
         <div>
           <ul>
-            {blogs.map(blog =>
+            {sortedBlogs.map(blog =>
               <Blog 
                 key={blog.id}
                 blog={blog}
