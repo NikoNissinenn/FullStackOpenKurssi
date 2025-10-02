@@ -78,6 +78,27 @@ const App = () => {
     }
   }
 
+  const handleBlogUpdate = async (blog) => {
+    try {
+      const updatedBlog = {
+        ...blog,
+        likes: blog.likes + 1,
+        user: blog.user.id
+      }
+      await blogService.update(blog.id, updatedBlog)
+      setBlogs(blogs.map((blog) => blog.id === updatedBlog.id ? updatedBlog : blog))
+      setSuccessMessage(`Blog '${updatedBlog.title}' updated`)
+      setTimeout(() => {
+        setSuccessMessage(null)
+      }, 5000)
+    } catch {
+      setErrorMessage('Updating blog failed')
+      setTimeout(() => {
+        setErrorMessage(null)
+      }, 5000)
+    }    
+  }
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
@@ -133,7 +154,11 @@ const App = () => {
         <div>
           <ul>
             {blogs.map(blog =>
-              <Blog key={blog.id} blog={blog} />
+              <Blog 
+                key={blog.id}
+                blog={blog}
+                handleBlogUpdate={handleBlogUpdate}
+              />
             )}
           </ul>
         </div>
