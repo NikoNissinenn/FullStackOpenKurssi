@@ -20,8 +20,10 @@ describe('Blog Component to be rendered', () => {
       token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5pa28gTmlzc2luZW4iLCJpZCI6IjY4ZGI3ZGRiYjFlZjdiMDM5MDYyMWM2NyIsImlhdCI6MTc1OTM5Mzk5N30.n7xLvhg1DezXxxmVAPD3QAqM0oJvOhvMlPelJhL7PkM'
   }
 
+  const mockHandler = vi.fn()
+
   beforeEach(() => {    
-    render(<Blog key={blog.id} blog={blog} user={user} />)
+    render(<Blog key={blog.id} blog={blog} user={user} handleBlogUpdate={mockHandler} />)
   })
 
   test('Renders title and author by default', () => {
@@ -40,5 +42,17 @@ describe('Blog Component to be rendered', () => {
     expect(screen.getByText(`Author: ${blog.author}`)).toBeDefined()
     expect(screen.getByText(`Url: ${blog.url}`)).toBeVisible()
     expect(screen.getByText(`Likes: ${blog.likes}`)).toBeVisible()
+  })
+
+  test('Clicking Like- button twice calls it two times', async () => {
+    const eventUser = userEvent.setup()
+    const button = screen.getByText('View')
+    await eventUser.click(button)
+
+    const likeButton = screen.getByText('Like')
+    await eventUser.click(likeButton)
+    await eventUser.click(likeButton)
+    
+    expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })
