@@ -101,6 +101,25 @@ const App = () => {
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
+  const handleBlogDelete = async (blog) => {
+    let text = `Remove blog '${blog.title}' by '${blog.author}' ?`;
+    if (confirm(text) == true) {
+      try {
+        await blogService.remove(blog.id)
+        setBlogs(blogs.filter(b => b.id !== blog.id))
+        setSuccessMessage(`Blog '${blog.title}' by '${blog.author}' deleted`)
+        setTimeout(() => {
+          setSuccessMessage(null)
+        }, 5000)
+      } catch {
+        setErrorMessage(`Deleting blog '${blog.title}' by '${blog.author}' failed. It has already been removed`)
+        setTimeout(() => {
+          setErrorMessage(null)
+        }, 5000)
+      }
+    }
+  }
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
@@ -160,6 +179,8 @@ const App = () => {
                 key={blog.id}
                 blog={blog}
                 handleBlogUpdate={handleBlogUpdate}
+                handleBlogDelete={handleBlogDelete}
+                user={user}
               />
             )}
           </ul>
