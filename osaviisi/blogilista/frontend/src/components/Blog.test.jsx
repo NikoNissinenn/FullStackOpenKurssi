@@ -30,4 +30,15 @@ describe('Blog Component to be rendered', () => {
     expect(screen.queryByText(`Url: ${blog.url}`)).not.toBeVisible()
     expect(screen.queryByText(`Likes: ${blog.likes}`)).not.toBeVisible()
   })
+
+  test('Renders URL and likes when button is clicked', async () => {
+    const eventUser = userEvent.setup()
+    const button = screen.getByText('View')
+    await eventUser.click(button)
+
+    expect(screen.getByText(`Title: ${blog.title}`)).toBeDefined()
+    expect(screen.getByText(`Author: ${blog.author}`)).toBeDefined()
+    expect(screen.getByText(`Url: ${blog.url}`)).toBeVisible()
+    expect(screen.getByText(`Likes: ${blog.likes}`)).toBeVisible()
+  })
 })
