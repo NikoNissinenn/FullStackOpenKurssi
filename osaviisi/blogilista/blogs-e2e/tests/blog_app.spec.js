@@ -80,5 +80,23 @@ describe('Bloglist app', () => {
 
       await expect(page.getByText("Blog 'Test title' by 'Test Author' deleted")).toBeVisible()
     })
+
+    test('Delete- button is shown only to user who added the blog', async ({ page, request }) => {
+      await testHelper.createBlog(page, 'Cant see this', 'Other User', 'https://www.example.com')
+      await page.getByText('Logout').click()
+      
+      await request.post('http://localhost:3003/api/users', {
+        data: {
+          username: 'Another User',
+          name: 'Another User',
+          password: 'salasana',
+        },
+      })
+
+      await testHelper.loginWith(page, 'Another User', 'salasana')
+      await page.getByText('View').click()
+      await expect(page.getByText('Remove')).not.toBeVisible()
+      await expect(page.getByText('Title: Cant see this')).toBeVisible()
+    })
   })
 })
