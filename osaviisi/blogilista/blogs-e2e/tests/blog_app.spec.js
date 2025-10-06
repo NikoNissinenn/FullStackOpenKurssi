@@ -36,4 +36,28 @@ describe('Bloglist app', () => {
       await expect(page.getByText('Wrong username or password')).toBeVisible()
     })
   })
+
+  describe('When logged in', () => {
+    beforeEach(async ({ page, request }) => {
+      await request.post('http://localhost:3003/api/testing/reset')
+      await request.post('http://localhost:3003/api/users', {
+        data: {
+          username: 'Niko Nissinen',
+          name: 'Niko Nissinen',
+          password: 'salasana',
+        },
+      })
+
+    await page.goto('http://localhost:5173')
+    await page.getByLabel('Username').fill('Niko Nissinen')
+    await page.getByLabel('Password').fill('salasana')
+    await page.getByText('Login').click()
+    })
+
+    test('A new blog can be created', async ({ page }) => {
+      await testHelper.createBlog(page, 'Test title', 'Test Author', 'https://www.example.com')
+      expect(page.getByText('New blog Test title by Test Author'))
+      await expect(page.getByText('View')).toBeVisible()
+    })
+})
 })
