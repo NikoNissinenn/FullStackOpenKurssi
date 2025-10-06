@@ -157,7 +157,7 @@ const App = () => {
       <div>
         <p>
           {`${user.username} logged in`}
-          <button onClick={handleLogout}>Logout</button>
+          <button data-testid='logoutbutton' onClick={handleLogout}>Logout</button>
         </p>
 
         <div style={hideWhenVisible}>
