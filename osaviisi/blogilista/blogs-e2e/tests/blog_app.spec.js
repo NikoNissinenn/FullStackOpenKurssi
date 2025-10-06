@@ -48,10 +48,10 @@ describe('Bloglist app', () => {
         },
       })
 
-    await page.goto('http://localhost:5173')
-    await page.getByLabel('Username').fill('Niko Nissinen')
-    await page.getByLabel('Password').fill('salasana')
-    await page.getByText('Login').click()
+      await page.goto('http://localhost:5173')
+      await page.getByLabel('Username').fill('Niko Nissinen')
+      await page.getByLabel('Password').fill('salasana')
+      await page.getByText('Login').click()
     })
 
     test('A new blog can be created', async ({ page }) => {
@@ -59,5 +59,13 @@ describe('Bloglist app', () => {
       expect(page.getByText('New blog Test title by Test Author'))
       await expect(page.getByText('View')).toBeVisible()
     })
-})
+
+    test('A blog can be liked', async ({ page }) => {
+      await testHelper.createBlog(page, 'Test title', 'Test Author', 'https://www.example.com')
+      await page.getByText('View').click()
+      await page.getByText('Like').click()
+      await expect(page.getByText('Likes: 1')).toBeVisible()
+      await expect(page.getByText("Blog 'Test title' updated")).toBeVisible()
+    })
+  })
 })
