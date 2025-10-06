@@ -169,6 +169,7 @@ const App = () => {
             setBlogformVisible={setBlogformVisible}
             setErrorMessage={setErrorMessage}
             setSuccessMessage={setSuccessMessage}
+            handleNewBlog={blogService.create}
           />
           <button onClick={() => setBlogformVisible(false)}>Cancel</button>
         </div>
