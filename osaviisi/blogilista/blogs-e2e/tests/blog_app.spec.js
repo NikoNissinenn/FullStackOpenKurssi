@@ -67,5 +67,18 @@ describe('Bloglist app', () => {
       await expect(page.getByText('Likes: 1')).toBeVisible()
       await expect(page.getByText("Blog 'Test title' updated")).toBeVisible()
     })
+
+    test('A blog can be removed by user who added it', async ({ page }) => {
+      await testHelper.createBlog(page, 'Test title', 'Test Author', 'https://www.example.com')
+      await page.getByText('View').click()
+
+      page.on('dialog', async dialog => {
+        await dialog.accept();
+      });
+
+      await page.getByText('Remove').click()      
+
+      await expect(page.getByText("Blog 'Test title' by 'Test Author' deleted")).toBeVisible()
+    })
   })
 })
