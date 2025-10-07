@@ -98,5 +98,34 @@ describe('Bloglist app', () => {
       await expect(page.getByText('Remove')).not.toBeVisible()
       await expect(page.getByText('Title: Cant see this')).toBeVisible()
     })
+
+    test('Blogs are arranged by their likes, most likes on top', async ({ page }) => {
+      await testHelper.createBlog(page, 'Test title', 'Test Author', 'https://www.example.com')
+      await testHelper.createBlog(page, 'Test title2', 'Test Author2', 'nettisivu')
+      await testHelper.createBlog(page, 'Test title3', 'Test Author3', 'testausta')
+
+      await page.getByTestId('viewblogbutton-Test title').click()
+      await page.waitForTimeout(20)
+
+      await page.getByTestId('viewblogbutton-Test title2').click()
+      await page.waitForTimeout(20)
+      await page.getByTestId('likeblogbutton-Test title2').click()
+      await page.waitForTimeout(20)
+
+      await page.getByTestId('viewblogbutton-Test title3').click()
+      await page.waitForTimeout(20)
+      await page.getByTestId('likeblogbutton-Test title3').click()
+      await page.waitForTimeout(20)
+      await page.getByTestId('likeblogbutton-Test title3').click()
+      await page.waitForTimeout(100)
+
+      expect(page.getByTestId('blog-likes').first()).toContainText('Likes: 2')
+      expect(page.getByTestId('blog-likes').nth(1)).toContainText('Likes: 1')
+      expect(page.getByTestId('blog-likes').last()).toContainText('Likes: 0')
+      
+      expect(page.getByTestId('blog-row').first()).toContainText('Title: Test title3 Hide')
+      expect(page.getByTestId('blog-row').nth(1)).toContainText('Title: Test title2 Hide')
+      expect(page.getByTestId('blog-row').last()).toContainText('Title: Test title Hide')
+    })
   })
 })
