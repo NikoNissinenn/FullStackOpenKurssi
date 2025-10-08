@@ -6,3 +6,12 @@
   margin-left: 1rem;
   cursor: pointer;
 }
+
+.notification {
+  border: 1px solid black;
+  padding: 0.5rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 1.5rem;
+}
