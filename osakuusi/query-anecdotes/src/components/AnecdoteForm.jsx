@@ -1,10 +1,11 @@
-const AnecdoteForm = () => {
+/* eslint-disable react/prop-types */
+const AnecdoteForm = ({ newAnecdoteMutation }) => {
 
-  const onCreate = (event) => {
+  const onCreate = async (event) => {
     event.preventDefault()
     const content = event.target.anecdote.value
     event.target.anecdote.value = ''
-    console.log('new anecdote')
+    newAnecdoteMutation.mutate({ content, id: (100000 * Math.random()).toFixed(0), votes: 0 })
 }
 
   return (
