@@ -3,12 +3,18 @@ import AnecdoteForm from './components/AnecdoteForm'
 import Notification from './components/Notification'
 import { getAll, createAnecdote, updateAnecdote } from './services/requests'
 import './App.css'
+import { useNotificationDispatch } from './components/NotificationContext'
 
 const App = () => {
   const queryClient = useQueryClient()
+  const notificationDispatch = useNotificationDispatch()
 
   const handleVote = (anecdote) => {
     updateAnecdoteMutation.mutate({...anecdote, votes: anecdote.votes + 1})
+    notificationDispatch({
+      type: 'SET',
+      payload: `Voted "${anecdote.content}"`
+    })
   }
 
   const result = useQuery({
