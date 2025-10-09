@@ -1,9 +1,9 @@
 /* eslint-disable react/prop-types */
 import { useSelector, useDispatch } from "react-redux";
-import { voteAnecdote } from "../reducers/anecdoteReducer";
+import { voteForAnecdote } from "../reducers/anecdoteReducer";
 import { notificationChange } from "../reducers/notificationReducer";
 
-const Anecdote = ({ anecdote, voteAnecdote }) => {
+const Anecdote = ({ anecdote, handleVoting }) => {
   return (
     <div key={anecdote.id} className='anecdote'>
       <div>
@@ -11,7 +11,7 @@ const Anecdote = ({ anecdote, voteAnecdote }) => {
       </div>
       <div>
         has {anecdote.votes} votes
-        <button className='votebutton' onClick={() => voteAnecdote()}>Vote</button>
+        <button className='votebutton' onClick={() => handleVoting(anecdote.id, anecdote.content, anecdote.votes)}>Vote</button>
       </div>
     </div>
   )
@@ -25,12 +25,12 @@ const AnecdoteList = () => {
     } else {
       return anecdotes.filter((anecdote) => {
         return anecdote.content.toLowerCase().includes(filter.toLowerCase())
-      }
-    )}
+      })
+    }
   })
 
-  const handleVoting = ({ id, content }) => {
-    dispatch(voteAnecdote(id))
+  const handleVoting = async ( id, content ) => {
+    dispatch(voteForAnecdote(id))
     dispatch(notificationChange(`Voted "${content}"`))
   }
 
@@ -40,7 +40,7 @@ const AnecdoteList = () => {
     <Anecdote 
       key={anecdote.id}
       anecdote={anecdote}
-      voteAnecdote={() => handleVoting(anecdote)}
+      handleVoting={() => handleVoting(anecdote.id, anecdote.content)}
     />
   )
 }
