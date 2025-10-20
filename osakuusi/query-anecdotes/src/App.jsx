@@ -29,6 +29,12 @@ const App = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['anecdotes'] })
     },
+    onError: () => {
+      notificationDispatch({
+        type: 'SET',
+        payload: `Too short anecdote, must have length 5 or more`
+      })
+    },
   })
 
   const updateAnecdoteMutation = useMutation({
