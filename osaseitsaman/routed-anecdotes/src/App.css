@@ -36,3 +36,7 @@
   border: 1px solid black;
   text-indent: 1rem;
 }
+
+.form-button {
+  margin-right: 0.5rem;
+}
