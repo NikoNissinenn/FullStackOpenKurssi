@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { Routes, Route, Link, useMatch, useNavigate } from 'react-router-dom'
 import './App.css'
+import { useField } from './hooks/index'
 
 const Menu = () => {
   return (
@@ -20,7 +21,8 @@ const AnecdoteList = ({ anecdotes }) => (
       {anecdotes.map(anecdote => 
         <li key={anecdote.id}>
           <Link to={`/anecdotes/${anecdote.id}`}>{anecdote.content}</Link>
-        </li>)}
+        </li>
+      )}
     </ul>
   </div>
 )
@@ -48,17 +50,17 @@ const Footer = () => (
 )
 
 const CreateNew = (props) => {
-  const [content, setContent] = useState('')
-  const [author, setAuthor] = useState('')
-  const [info, setInfo] = useState('')
+  const content = useField('text')
+  const author = useField('text')
+  const info = useField('url')
 
 
   const handleSubmit = (e) => {
     e.preventDefault()
     props.addNew({
-      content,
-      author,
-      info,
+      content: content.value,
+      author: author.value,
+      info: info.value,
       votes: 0
     })
   }
@@ -69,15 +71,15 @@ const CreateNew = (props) => {
       <form onSubmit={handleSubmit}>
         <div className='input-component'>
           Content:
-          <input name='content' value={content} onChange={(e) => setContent(e.target.value)} />
+          <input {...content} />
         </div>
         <div className='input-component'>
           Author:
-          <input name='author' value={author} onChange={(e) => setAuthor(e.target.value)} />
+          <input {...author} />
         </div>
         <div className='input-component'>
           Url for more info:
-          <input name='info' value={info} onChange={(e)=> setInfo(e.target.value)} />
+          <input {...info} />
         </div>
         <button>Create</button>
       </form>
@@ -90,7 +92,7 @@ const Anecdote = ({ anecdote }) => {
     <div className='anecdote'>
       <h2>{anecdote.content} by {anecdote.author}</h2>
       <div className='info-line'>Has {anecdote.votes} votes</div>      
-      <div className='info-line'>For more info see <a href={anecdote.info}>{anecdote.info}</a></div>
+      <div className='info-line'>For more info see <a href={anecdote.info} target='blank'>{anecdote.info}</a></div>
     </div>
   )
 }
