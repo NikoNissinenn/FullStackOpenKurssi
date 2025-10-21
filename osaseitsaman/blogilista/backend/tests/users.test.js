@@ -54,7 +54,7 @@ describe('Users POST-method tests', () => {
     const newUser = {
       username: userHelper.testUser.username,
       name: userHelper.testUser.name,
-      password: userHelper.testUser.password
+      password: userHelper.testUser.password,
     }
 
     await api
@@ -64,7 +64,7 @@ describe('Users POST-method tests', () => {
       .expect('Content-Type', /application\/json/)
 
     const usersAtEnd = await userHelper.usersInDatabase()
-    assert.strictEqual(usersAtEnd.length, (usersAtStart.length + 1))
+    assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
     const usernames = usersAtEnd.map((user) => user.username)
     assert(usernames.includes(newUser.username))
@@ -75,7 +75,7 @@ describe('Users POST-method tests', () => {
     const newUser = {
       username: '',
       name: userHelper.testUser.name,
-      password: userHelper.testUser.password
+      password: userHelper.testUser.password,
     }
 
     const result = await api
@@ -95,7 +95,7 @@ describe('Users POST-method tests', () => {
     const newUser = {
       username: 'TT',
       name: userHelper.testUser.name,
-      password: userHelper.testUser.password
+      password: userHelper.testUser.password,
     }
 
     const result = await api
@@ -114,7 +114,7 @@ describe('Users POST-method tests', () => {
     const newUser = {
       username: 'root',
       name: 'root',
-      password: 'salasana'
+      password: 'salasana',
     }
 
     const result = await api
@@ -133,7 +133,7 @@ describe('Users POST-method tests', () => {
     const newUser = {
       username: userHelper.testUser.username,
       name: userHelper.testUser.name,
-      password: ''
+      password: '',
     }
 
     const result = await api
@@ -152,7 +152,7 @@ describe('Users POST-method tests', () => {
     const newUser = {
       username: userHelper.testUser.username,
       name: userHelper.testUser.name,
-      password: 'T'
+      password: 'T',
     }
 
     const result = await api

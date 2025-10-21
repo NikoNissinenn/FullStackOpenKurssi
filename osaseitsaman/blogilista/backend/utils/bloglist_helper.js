@@ -10,51 +10,50 @@ const initialBlogs = [
     title: 'React patterns',
     author: 'Michael Chan',
     url: 'https://reactpatterns.com/',
-    likes: 7
+    likes: 7,
   },
   {
     _id: '5a422aa71b54a676234d17f8',
     title: 'Go To Statement Considered Harmful',
     author: 'Edsger W. Dijkstra',
     url: 'http://www.u.arizona.edu/~rubinson/copyright_violations/Go_To_Considered_Harmful.html',
-    likes: 5
-  }
+    likes: 5,
+  },
 ]
 
 const newBlog = {
   title: 'Test title',
   author: 'Test author',
   url: 'https://example.com/',
-  likes: 8
+  likes: 8,
 }
 
 const missingLikesBlog = {
   title: 'Test title0',
   author: 'Test author0',
   url: 'https://example.com/',
-  likes: ''
+  likes: '',
 }
 
 const missingTitleBlog = {
   title: '',
   author: 'Test author',
   url: 'https://example.com/',
-  likes: 8
+  likes: 8,
 }
 
 const missingUrlBlog = {
   title: 'Test title',
   author: 'Test author',
   url: '',
-  likes: 8
+  likes: 8,
 }
 
 const testUser = {
   username: 'Test POSTname',
   name: 'Niko Nissinenn',
-  password: 'salasana2'
+  password: 'salasana2',
 }
-
 
 const usersInDatabase = async () => {
   const users = await User.find({})
@@ -70,14 +69,12 @@ const userLogin = async () => {
   const testerUser = {
     username: 'Niko Nissinen',
     name: 'Niko Nissinen',
-    password: 'salasana'
+    password: 'salasana',
   }
 
-  await api.post('/api/users')
-    .send(testerUser)
+  await api.post('/api/users').send(testerUser)
 
-  const result = await api.post('/api/login')
-    .send(testerUser)
+  const result = await api.post('/api/login').send(testerUser)
 
   return `Bearer ${result.body.token}`
 }
@@ -91,5 +88,5 @@ module.exports = {
   usersInDatabase,
   testUser,
   blogsInDb,
-  userLogin
+  userLogin,
 }

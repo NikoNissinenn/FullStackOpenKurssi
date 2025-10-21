@@ -24,7 +24,6 @@ describe('Total likes', () => {
   })
 })
 
-
 describe('Favourite Blog', () => {
   test('Of empty list returns null', () => {
     const result = listHelper.favoriteBlog([])
@@ -40,7 +39,6 @@ describe('Favourite Blog', () => {
   })
 })
 
-
 describe('Most Blogs', () => {
   test('Of empty list returns null', () => {
     const result = listHelper.mostBlogs([])
@@ -48,14 +46,19 @@ describe('Most Blogs', () => {
   })
   test('When list has only one blog equals the given blog', () => {
     const result = listHelper.mostBlogs(listHelper.onlyOneBlog)
-    assert.deepStrictEqual(result, {author: listHelper.onlyOneBlog[0].author, blogs: 1})
+    assert.deepStrictEqual(result, {
+      author: listHelper.onlyOneBlog[0].author,
+      blogs: 1,
+    })
   })
   test('Of a bigger list is calculated right', () => {
     const result = listHelper.mostBlogs(listHelper.premadeBlogs)
-    assert.deepStrictEqual(result, {author: listHelper.premadeBlogs[4].author, blogs: 3})
+    assert.deepStrictEqual(result, {
+      author: listHelper.premadeBlogs[4].author,
+      blogs: 3,
+    })
   })
 })
-
 
 describe('Most Likes', () => {
   test('Of empty list returns null', () => {
@@ -64,10 +67,16 @@ describe('Most Likes', () => {
   })
   test('When list has only one blog equals the given blog', () => {
     const result = listHelper.mostLikes(listHelper.onlyOneBlog)
-    assert.deepStrictEqual(result, {author: listHelper.onlyOneBlog[0].author, likes: listHelper.onlyOneBlog[0].likes})
+    assert.deepStrictEqual(result, {
+      author: listHelper.onlyOneBlog[0].author,
+      likes: listHelper.onlyOneBlog[0].likes,
+    })
   })
   test('Of a bigger list is calculated right', () => {
     const result = listHelper.mostLikes(listHelper.premadeBlogs)
-    assert.deepStrictEqual(result, {author: listHelper.premadeBlogs[2].author, likes: listHelper.premadeBlogs[2].likes})
+    assert.deepStrictEqual(result, {
+      author: listHelper.premadeBlogs[2].author,
+      likes: listHelper.premadeBlogs[2].likes,
+    })
   })
 })

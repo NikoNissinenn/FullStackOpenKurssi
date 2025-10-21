@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useState } from 'react'
 
-const BlogCreationForm = ( props ) => {
+const BlogCreationForm = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
@@ -12,19 +12,23 @@ const BlogCreationForm = ( props ) => {
         title: title,
         author: author,
         url: url,
-        likes: 0
+        likes: 0,
       }
       await props.handleNewBlog(createdBlog)
       setTitle('')
       setAuthor('')
       setUrl('')
       props.setBlogformVisible(false)
-      props.setSuccessMessage(`New blog ${createdBlog.title} by ${createdBlog.author}`)
+      props.setSuccessMessage(
+        `New blog ${createdBlog.title} by ${createdBlog.author}`
+      )
       setTimeout(() => {
         props.setSuccessMessage(null)
       }, 5000)
     } catch {
-      props.setErrorMessage('Something went wrong when creating new blog. Fill all the fields')
+      props.setErrorMessage(
+        'Something went wrong when creating new blog. Fill all the fields'
+      )
       setTimeout(() => {
         props.setErrorMessage(null)
       }, 5000)
@@ -40,7 +44,7 @@ const BlogCreationForm = ( props ) => {
           <label>
             Title:
             <input
-              id='titlefield'
+              id="titlefield"
               type="text"
               value={title}
               onChange={({ target }) => setTitle(target.value)}
@@ -49,10 +53,10 @@ const BlogCreationForm = ( props ) => {
         </div>
 
         <div>
-          <label>            
+          <label>
             Author:
             <input
-              id='authorfield'
+              id="authorfield"
               type="text"
               value={author}
               onChange={({ target }) => setAuthor(target.value)}
@@ -64,14 +68,16 @@ const BlogCreationForm = ( props ) => {
           <label>
             Url:
             <input
-              id='urlfield'
+              id="urlfield"
               type="text"
               value={url}
               onChange={({ target }) => setUrl(target.value)}
             />
           </label>
         </div>
-        <button data-testid='newblogbutton' type="submit">Create</button>
+        <button data-testid="newblogbutton" type="submit">
+          Create
+        </button>
       </form>
     </div>
   )

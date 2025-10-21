@@ -11,19 +11,28 @@ describe('Blog Component to be rendered', () => {
     likes: 5,
     user: {
       username: 'Niko Nissinen',
-      name: 'Niko Nissinen'
-    }}
+      name: 'Niko Nissinen',
+    },
+  }
 
   const user = {
-      username: 'Niko Nissinen',
-      name: 'Niko Nissinen',
-      token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5pa28gTmlzc2luZW4iLCJpZCI6IjY4ZGI3ZGRiYjFlZjdiMDM5MDYyMWM2NyIsImlhdCI6MTc1OTM5Mzk5N30.n7xLvhg1DezXxxmVAPD3QAqM0oJvOhvMlPelJhL7PkM'
+    username: 'Niko Nissinen',
+    name: 'Niko Nissinen',
+    token:
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Ik5pa28gTmlzc2luZW4iLCJpZCI6IjY4ZGI3ZGRiYjFlZjdiMDM5MDYyMWM2NyIsImlhdCI6MTc1OTM5Mzk5N30.n7xLvhg1DezXxxmVAPD3QAqM0oJvOhvMlPelJhL7PkM',
   }
 
   const mockHandler = vi.fn()
 
-  beforeEach(() => {    
-    render(<Blog key={blog.id} blog={blog} user={user} handleBlogUpdate={mockHandler} />)
+  beforeEach(() => {
+    render(
+      <Blog
+        key={blog.id}
+        blog={blog}
+        user={user}
+        handleBlogUpdate={mockHandler}
+      />
+    )
   })
 
   test('Renders title and author by default', () => {
@@ -52,7 +61,7 @@ describe('Blog Component to be rendered', () => {
     const likeButton = screen.getByText('Like')
     await eventUser.click(likeButton)
     await eventUser.click(likeButton)
-    
+
     expect(mockHandler.mock.calls).toHaveLength(2)
   })
 })

@@ -30,7 +30,7 @@ describe('Bloglist GET-method tests', () => {
   test('Specific blog content is returned correctly', async () => {
     const response = await api.get('/api/blogs')
 
-    const contents = response.body.map(e => e.author)
+    const contents = response.body.map((e) => e.author)
     assert(contents.includes('Edsger W. Dijkstra'))
   })
 
@@ -40,7 +40,6 @@ describe('Bloglist GET-method tests', () => {
     assert.deepStrictEqual(response.body[0].id, blogHelper.initialBlogs[0]._id)
   })
 })
-
 
 describe('Bloglist POST-method tests', () => {
   let header
@@ -58,7 +57,7 @@ describe('Bloglist POST-method tests', () => {
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length + 1))
+    assert.strictEqual(response.body.length, blogHelper.initialBlogs.length + 1)
   })
 
   test('Error code 401 for invalid authorization', async () => {
@@ -97,7 +96,7 @@ describe('Bloglist POST-method tests', () => {
       .expect('Content-Type', /application\/json/)
 
     const response = await api.get('/api/blogs')
-    assert.strictEqual(response.body.length, (blogHelper.initialBlogs.length + 1))
+    assert.strictEqual(response.body.length, blogHelper.initialBlogs.length + 1)
     assert.deepStrictEqual(response.body[2].likes, 0)
   })
 
@@ -123,7 +122,6 @@ describe('Bloglist POST-method tests', () => {
     assert.strictEqual(response.body.length, blogHelper.initialBlogs.length)
   })
 })
-
 
 describe('Bloglist DELETE-method tests', () => {
   let header
@@ -154,7 +152,7 @@ describe('Bloglist DELETE-method tests', () => {
       .expect(204)
 
     const blogsAfter = await api.get('/api/blogs')
-    const deleted = blogsAfter.body.find(b => b.id === blogId)
+    const deleted = blogsAfter.body.find((b) => b.id === blogId)
 
     assert.strictEqual(deleted, undefined)
   })
@@ -198,12 +196,10 @@ describe('Bloglist PUT-method tests', () => {
     const blogToUpdate = blogsAtStart.body[0]
     const updatedBlog = {
       ...blogToUpdate,
-      likes: 22
+      likes: 22,
     }
 
-    await api.put(`/api/blogs/${blogToUpdate.id}`)
-      .send(updatedBlog)
-      .expect(200)
+    await api.put(`/api/blogs/${blogToUpdate.id}`).send(updatedBlog).expect(200)
 
     const blogsAtEnd = await api.get('/api/blogs')
 
@@ -216,12 +212,10 @@ describe('Bloglist PUT-method tests', () => {
     const blogToUpdate = blogsAtStart[0]
     const updatedBlog = {
       ...blogToUpdate,
-      likes: 22
+      likes: 22,
     }
 
-    await api.put('/api/blogs/invalidID')
-      .send(updatedBlog)
-      .expect(400)
+    await api.put('/api/blogs/invalidID').send(updatedBlog).expect(400)
 
     const blogsAtEnd = await api.get('/api/blogs')
     assert.deepStrictEqual(blogsAtEnd.body[0].likes, blogsAtStart.body[0].likes)
