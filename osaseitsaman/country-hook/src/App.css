@@ -1,0 +1,13 @@
+.country-info h3 {
+  font-size: 2rem;
+}
+
+.country-info div {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.error-div {
+  font-size: 1.4rem;
+  margin-top: 2rem;
+}
