@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { notificationChange } from '../reducers/notificationReducer'
 import { useDispatch } from 'react-redux'
+import { createBlog } from '../reducers/blogReducer'
 
 const BlogCreationForm = (props) => {
   const [title, setTitle] = useState('')
@@ -11,14 +12,14 @@ const BlogCreationForm = (props) => {
 
   const handleNewBlog = async (event) => {
     event.preventDefault()
+    let createdBlog = {
+      title: title,
+      author: author,
+      url: url,
+      likes: 0,
+    }
     try {
-      let createdBlog = {
-        title: title,
-        author: author,
-        url: url,
-        likes: 0,
-      }
-      await props.handleNewBlog(createdBlog)
+      dispatch(createBlog(createdBlog))
       setTitle('')
       setAuthor('')
       setUrl('')
