@@ -4,19 +4,23 @@ import blogService from './services/blogs'
 import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogCreationForm from './components/BlogCreationForm'
+import notificatoinReducer, {
+  notificationChange,
+} from './reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [successMessage, setSuccessMessage] = useState(null)
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
   const [blogformVisible, setBlogformVisible] = useState(false)
 
+  const dispatch = useDispatch()
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs))
-  }, [successMessage, errorMessage])
+  }, [dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -24,10 +28,12 @@ const App = () => {
       const user = JSON.parse(loggedUserJSON)
       setUser(user)
       blogService.setToken(user.token)
-      setSuccessMessage('Fetched user info from local storage')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      dispatch(
+        notificationChange({
+          message: 'Fetched user info from local storage',
+          notificationtype: 'success',
+        })
+      )
     }
   }, [])
 
@@ -41,15 +47,19 @@ const App = () => {
       setUser(user)
       setUsername('')
       setPassword('')
-      setSuccessMessage('You have been logged in')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      dispatch(
+        notificationChange({
+          message: 'You have been logged in',
+          notificationtype: 'success',
+        })
+      )
     } catch {
-      setErrorMessage('Wrong username or password')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(
+        notificationChange({
+          message: 'Wrong username or password',
+          notificationtype: 'error',
+        })
+      )
     }
   }
 
@@ -59,15 +69,19 @@ const App = () => {
       window.localStorage.removeItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(null)
       setUser(null)
-      setSuccessMessage('You have been logged out')
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      dispatch(
+        notificationChange({
+          message: 'You have been logged out',
+          notificationtype: 'success',
+        })
+      )
     } catch {
-      setErrorMessage('Something went wrong when login out')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(
+        notificationChange({
+          message: 'Something went wrong when login out',
+          notificationtype: 'error',
+        })
+      )
     }
   }
 
@@ -78,19 +92,23 @@ const App = () => {
         likes: blog.likes + 1,
         user: blog.user.id,
       }
-      await blogService.update(blog.id, updatedBlog)
+      const returnedBlog = await blogService.update(blog.id, updatedBlog)
       setBlogs(
-        blogs.map((blog) => (blog.id === updatedBlog.id ? updatedBlog : blog))
+        blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
       )
-      setSuccessMessage(`Blog '${updatedBlog.title}' updated`)
-      setTimeout(() => {
-        setSuccessMessage(null)
-      }, 5000)
+      dispatch(
+        notificationChange({
+          message: `Blog '${returnedBlog.title}' updated`,
+          notificationtype: 'success',
+        })
+      )
     } catch {
-      setErrorMessage('Updating blog failed')
-      setTimeout(() => {
-        setErrorMessage(null)
-      }, 5000)
+      dispatch(
+        notificationChange({
+          message: 'Updating blog failed',
+          notificationtype: 'error',
+        })
+      )
     }
   }
 
@@ -102,17 +120,20 @@ const App = () => {
       try {
         await blogService.remove(blog.id)
         setBlogs(blogs.filter((b) => b.id !== blog.id))
-        setSuccessMessage(`Blog '${blog.title}' by '${blog.author}' deleted`)
-        setTimeout(() => {
-          setSuccessMessage(null)
-        }, 5000)
-      } catch {
-        setErrorMessage(
-          `Deleting blog '${blog.title}' by '${blog.author}' failed. It has already been removed`
+        dispatch(
+          notificationChange({
+            message: `Blog '${blog.title}' by '${blog.author}' deleted`,
+            notificationtype: 'success',
+          })
         )
-        setTimeout(() => {
-          setErrorMessage(null)
-        }, 5000)
+      } catch {
+        setBlogs(blogs.filter((b) => b.id !== blog.id))
+        dispatch(
+          notificationChange({
+            message: `Deleting blog '${blog.title}' by '${blog.author}' failed. It has already been removed`,
+            notificationtype: 'error',
+          })
+        )
       }
     }
   }
@@ -171,8 +192,6 @@ const App = () => {
         <div style={showWhenVisible}>
           <BlogCreationForm
             setBlogformVisible={setBlogformVisible}
-            setErrorMessage={setErrorMessage}
-            setSuccessMessage={setSuccessMessage}
             handleNewBlog={blogService.create}
           />
           <button onClick={() => setBlogformVisible(false)}>Cancel</button>
@@ -197,10 +216,7 @@ const App = () => {
   return (
     <div>
       <h1>Blogs</h1>
-      <Notification
-        errorMessage={errorMessage}
-        successMessage={successMessage}
-      />
+      <Notification />
       {!user && loginForm()}
       {user && blogForm()}
     </div>

@@ -1,9 +1,13 @@
 import { useState } from 'react'
+import { notificationChange } from '../reducers/notificationReducer'
+import { useDispatch } from 'react-redux'
 
 const BlogCreationForm = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+
+  const dispatch = useDispatch()
 
   const handleNewBlog = async (event) => {
     event.preventDefault()
@@ -19,19 +23,20 @@ const BlogCreationForm = (props) => {
       setAuthor('')
       setUrl('')
       props.setBlogformVisible(false)
-      props.setSuccessMessage(
-        `New blog ${createdBlog.title} by ${createdBlog.author}`
+      dispatch(
+        notificationChange({
+          message: `New blog ${createdBlog.title} by ${createdBlog.author}`,
+          notificationtype: 'success',
+        })
       )
-      setTimeout(() => {
-        props.setSuccessMessage(null)
-      }, 5000)
     } catch {
-      props.setErrorMessage(
-        'Something went wrong when creating new blog. Fill all the fields'
+      dispatch(
+        notificationChange({
+          message:
+            'Something went wrong when creating new blog. Fill all the fields',
+          notificationtype: 'error',
+        })
       )
-      setTimeout(() => {
-        props.setErrorMessage(null)
-      }, 5000)
     }
   }
 
