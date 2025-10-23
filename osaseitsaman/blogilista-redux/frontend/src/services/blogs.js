@@ -1,7 +1,8 @@
 import axios from 'axios'
 const baseUrl = '/api/blogs'
+import { getToken } from '../reducers/loginReducer'
 
-let token = null
+let token = getToken()
 
 const setToken = (newToken) => {
   token = `Bearer ${newToken}`
