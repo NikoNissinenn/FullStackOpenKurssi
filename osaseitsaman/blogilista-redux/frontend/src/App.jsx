@@ -6,7 +6,7 @@ import Notification from './components/Notification'
 import BlogCreationForm from './components/BlogCreationForm'
 import { notificationChange } from './reducers/notificationReducer'
 import { useDispatch, useSelector } from 'react-redux'
-import { getBlogs } from './reducers/blogReducer'
+import { getBlogs, updateBlog, deleteBlog } from './reducers/blogReducer'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -92,13 +92,10 @@ const App = () => {
         likes: blog.likes + 1,
         user: blog.user.id,
       }
-      const returnedBlog = await blogService.update(blog.id, updatedBlog)
-      setBlogs(
-        blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
-      )
+      dispatch(updateBlog({ id: updatedBlog.id, blog: updatedBlog }))
       dispatch(
         notificationChange({
-          message: `Blog '${returnedBlog.title}' updated`,
+          message: `Blog '${updatedBlog.title}' updated`,
           notificationtype: 'success',
         })
       )
@@ -118,19 +115,18 @@ const App = () => {
     let text = `Remove blog '${blog.title}' by '${blog.author}' ?`
     if (confirm(text) === true) {
       try {
-        await blogService.remove(blog.id)
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
+        dispatch(deleteBlog(blog.id))
         dispatch(
           notificationChange({
             message: `Blog '${blog.title}' by '${blog.author}' deleted`,
             notificationtype: 'success',
           })
         )
-      } catch {
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
+      } catch (error) {
+        dispatch(getBlogs(blogs))
         dispatch(
           notificationChange({
-            message: `Deleting blog '${blog.title}' by '${blog.author}' failed. It has already been removed`,
+            message: `Deleting blog '${blog.title}' by '${blog.author}' failed. ${(error, error.message)}`,
             notificationtype: 'error',
           })
         )
