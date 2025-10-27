@@ -1,9 +1,12 @@
 import { useState } from 'react'
+import { useNotificationDispatch } from '../contextfiles/NotificationContext'
 
 const BlogCreationForm = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+
+  const notificationDispatch = useNotificationDispatch()
 
   const handleNewBlog = async (event) => {
     event.preventDefault()
@@ -19,19 +22,15 @@ const BlogCreationForm = (props) => {
       setAuthor('')
       setUrl('')
       props.setBlogformVisible(false)
-      props.setSuccessMessage(
-        `New blog ${createdBlog.title} by ${createdBlog.author}`
-      )
-      setTimeout(() => {
-        props.setSuccessMessage(null)
-      }, 5000)
+      notificationDispatch({
+        type: 'SET',
+        payload: `New blog ${createdBlog.title} by ${createdBlog.author}`
+      })
     } catch {
-      props.setErrorMessage(
-        'Something went wrong when creating new blog. Fill all the fields'
-      )
-      setTimeout(() => {
-        props.setErrorMessage(null)
-      }, 5000)
+      notificationDispatch({
+        type: 'SET',
+        payload: `Error: Something went wrong when creating new blog. Fill all the fields`
+      })
     }
   }
 

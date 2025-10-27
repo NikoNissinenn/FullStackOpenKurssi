@@ -1,15 +1,30 @@
-const Notification = ({ errorMessage, successMessage }) => {
-  if (errorMessage === null && successMessage === null) {
-    return null
+import { useNotificationValue } from "../contextfiles/NotificationContext"
+
+const Notification = () => {
+  const notification = useNotificationValue()
+
+  const style = {
+    border: 'solid',
+    padding: 10,
+    borderWidth: 1,
+    marginBottom: 5
   }
 
-  if (errorMessage) {
-    return <div className="error">{errorMessage}</div>
-  }
+  if (notification === '') { return null }
 
-  if (successMessage) {
-    return <div className="success">{successMessage}</div>
-  }
+  if (notification.includes('Error:')) {
+    return (
+      <div style={style} className='error'>
+        {notification}
+      </div>
+    )
+  }  
+
+  return (
+    <div style={style} className='success'>
+      {notification}
+    </div>
+  )
 }
 
 export default Notification
