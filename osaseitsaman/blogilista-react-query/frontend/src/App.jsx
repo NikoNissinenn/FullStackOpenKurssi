@@ -5,10 +5,10 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogCreationForm from './components/BlogCreationForm'
 import { useNotificationDispatch } from './contextfiles/NotificationContext'
-import { useQueryClient, useMutation } from '@tanstack/react-query';
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
+import { getBlogs, createBlog } from './contextfiles/requests'
 
 const App = () => {
-  const [blogs, setBlogs] = useState([])
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
@@ -16,11 +16,6 @@ const App = () => {
 
   const queryClient = useQueryClient()
   const notificationDispatch = useNotificationDispatch()
-
-  useEffect(() => {
-    blogService.getAll().then((blogs) => setBlogs(blogs))
-    console.log('rendered')
-  }, [])
 
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
@@ -34,6 +29,43 @@ const App = () => {
       })
     }
   }, [])
+
+  const result = useQuery({
+    queryKey: ['blogs'],
+    queryFn: getBlogs,
+    refetchOnWindowFocus: false,
+    retry: 1
+  })
+
+  const newBlogMutation = useMutation({
+    mutationFn: ({ newBlog, token }) => createBlog({newBlog, token}),
+    onSuccess: (createdBlog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      notificationDispatch({
+        type: 'SET',
+        payload: `New blog ${createdBlog.title} by ${createdBlog.author}`
+      })
+    },
+    onError: (error) => {
+      console.log(error)
+      notificationDispatch({
+        type: 'SET',
+        payload: `Error: Something went wrong when creating new blog. Fill all the fields`
+      })
+    }
+  })
+
+  if ( result.isLoading ) {
+    return <div>Loading data...</div>
+  }
+
+  if ( result.isError ) {
+    return <div>Bloglist service not available due to problems in server</div>
+  }
+
+  const blogs = result.data
+
+
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -119,6 +151,10 @@ const App = () => {
     }
   }
 
+  
+
+  console.log(queryClient.getQueryState(['blogs']))
+
   const loginForm = () => (
     <form onSubmit={handleLogin}>
       <h2>Log in to application</h2>
@@ -173,7 +209,8 @@ const App = () => {
         <div style={showWhenVisible}>
           <BlogCreationForm
             setBlogformVisible={setBlogformVisible}
-            handleNewBlog={blogService.create}
+            newBlogMutation={newBlogMutation}
+            user={user}
           />
           <button onClick={() => setBlogformVisible(false)}>Cancel</button>
         </div>

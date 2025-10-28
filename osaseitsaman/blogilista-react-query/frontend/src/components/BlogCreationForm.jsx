@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import { useNotificationDispatch } from '../contextfiles/NotificationContext'
+import { useQuery, useMutation } from '@tanstack/react-query'
 
 const BlogCreationForm = (props) => {
   const [title, setTitle] = useState('')
   const [author, setAuthor] = useState('')
   const [url, setUrl] = useState('')
+  const token = props.user.token
 
   const notificationDispatch = useNotificationDispatch()
 
@@ -17,7 +19,7 @@ const BlogCreationForm = (props) => {
         url: url,
         likes: 0,
       }
-      await props.handleNewBlog(createdBlog)
+      props.newBlogMutation.mutate({ newBlog: createdBlog, token })
       setTitle('')
       setAuthor('')
       setUrl('')
