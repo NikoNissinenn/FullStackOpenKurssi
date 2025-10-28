@@ -14,7 +14,10 @@ const notificationReducer = (state, action) => {
 const NotificationContext = createContext()
 
 export const NotificationContextProvider = (props) => {
-  const [notification, notificationDispatch] = useReducer(notificationReducer, '')
+  const [notification, notificationDispatch] = useReducer(
+    notificationReducer,
+    ''
+  )
 
   useEffect(() => {
     if (notification !== '') {
@@ -23,10 +26,10 @@ export const NotificationContextProvider = (props) => {
       }, 5000)
       return () => clearTimeout(timeout)
     }
-  }, [notification]);
+  }, [notification])
 
   return (
-    <NotificationContext.Provider value={[notification, notificationDispatch] }>
+    <NotificationContext.Provider value={[notification, notificationDispatch]}>
       {props.children}
     </NotificationContext.Provider>
   )

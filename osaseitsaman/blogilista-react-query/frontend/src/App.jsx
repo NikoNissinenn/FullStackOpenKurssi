@@ -5,8 +5,13 @@ import loginService from './services/login'
 import Notification from './components/Notification'
 import BlogCreationForm from './components/BlogCreationForm'
 import { useNotificationDispatch } from './contextfiles/NotificationContext'
-import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query';
-import { getBlogs, createBlog } from './contextfiles/requests'
+import { useQueryClient, useMutation, useQuery } from '@tanstack/react-query'
+import {
+  getBlogs,
+  createBlog,
+  updateBlog,
+  deleteBlog,
+} from './contextfiles/requests'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -25,7 +30,7 @@ const App = () => {
       blogService.setToken(user.token)
       notificationDispatch({
         type: 'SET',
-        payload: 'Fetched user info from local storage'
+        payload: 'Fetched user info from local storage',
       })
     }
   }, [])
@@ -34,38 +39,72 @@ const App = () => {
     queryKey: ['blogs'],
     queryFn: getBlogs,
     refetchOnWindowFocus: false,
-    retry: 1
+    retry: 1,
   })
 
   const newBlogMutation = useMutation({
-    mutationFn: ({ newBlog, token }) => createBlog({newBlog, token}),
+    mutationFn: ({ newBlog, token }) => createBlog({ newBlog, token }),
     onSuccess: (createdBlog) => {
       queryClient.invalidateQueries({ queryKey: ['blogs'] })
       notificationDispatch({
         type: 'SET',
-        payload: `New blog ${createdBlog.title} by ${createdBlog.author}`
+        payload: `New blog ${createdBlog.title} by ${createdBlog.author}`,
       })
     },
     onError: (error) => {
       console.log(error)
       notificationDispatch({
         type: 'SET',
-        payload: `Error: Something went wrong when creating new blog. Fill all the fields`
+        payload: `Error: Something went wrong when creating new blog. Fill all the fields`,
       })
-    }
+    },
   })
 
-  if ( result.isLoading ) {
+  const updateBlogMutation = useMutation({
+    mutationFn: (blog) => updateBlog(blog),
+    onSuccess: (updatedBlog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      notificationDispatch({
+        type: 'SET',
+        payload: `Blog '${updatedBlog.title}' updated`,
+      })
+    },
+    onError: (error) => {
+      console.log(error)
+      notificationDispatch({
+        type: 'SET',
+        payload: 'Error: Updating blog failed',
+      })
+    },
+  })
+
+  const deleteBlogMutation = useMutation({
+    mutationFn: ({ blog, token }) => deleteBlog({ blog, token }),
+    onSuccess: (blog) => {
+      queryClient.invalidateQueries({ queryKey: ['blogs'] })
+      notificationDispatch({
+        type: 'SET',
+        payload: `Blog '${blog.title}' by '${blog.author}' deleted`,
+      })
+    },
+    onError: (error, blog) => {
+      console.log(error)
+      notificationDispatch({
+        type: 'SET',
+        payload: `Error: Deleting blog '${blog.title}' by '${blog.author}' failed. It has already been removed`,
+      })
+    },
+  })
+
+  if (result.isLoading) {
     return <div>Loading data...</div>
   }
 
-  if ( result.isError ) {
+  if (result.isError) {
     return <div>Bloglist service not available due to problems in server</div>
   }
 
   const blogs = result.data
-
-
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -78,12 +117,12 @@ const App = () => {
       setPassword('')
       notificationDispatch({
         type: 'SET',
-        payload: 'You have been logged in'
+        payload: 'You have been logged in',
       })
     } catch {
       notificationDispatch({
         type: 'SET',
-        payload: 'Error: Wrong username or password'
+        payload: 'Error: Wrong username or password',
       })
     }
   }
@@ -96,63 +135,34 @@ const App = () => {
       setUser(null)
       notificationDispatch({
         type: 'SET',
-        payload: 'You have been logged out'
+        payload: 'You have been logged out',
       })
     } catch {
       notificationDispatch({
         type: 'SET',
-        payload: 'Error: Something went wrong when login out'
+        payload: 'Error: Something went wrong when login out',
       })
     }
   }
 
   const handleBlogUpdate = async (blog) => {
-    try {
-      const updatedBlog = {
-        ...blog,
-        likes: blog.likes + 1,
-        user: blog.user.id,
-      }
-      const returnedBlog = await blogService.update(blog.id, updatedBlog)
-      setBlogs(
-        blogs.map((blog) => (blog.id === returnedBlog.id ? returnedBlog : blog))
-      )
-      notificationDispatch({
-        type: 'SET',
-        payload: `Blog '${updatedBlog.title}' updated`
-      })
-    } catch {
-      notificationDispatch({
-        type: 'SET',
-        payload: 'Error: Updating blog failed'
-      })
+    const updatedBlog = {
+      ...blog,
+      likes: blog.likes + 1,
+      user: blog.user.id,
     }
+    updateBlogMutation.mutate(updatedBlog)
   }
-
-  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
 
   const handleBlogDelete = async (blog) => {
     let text = `Remove blog '${blog.title}' by '${blog.author}' ?`
     if (confirm(text) === true) {
-      try {
-        await blogService.remove(blog.id)
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
-        notificationDispatch({
-        type: 'SET',
-        payload: `Blog '${blog.title}' by '${blog.author}' deleted`
-      })
-      } catch {
-        setBlogs(blogs.filter((b) => b.id !== blog.id))
-        notificationDispatch({
-        type: 'SET',
-        payload: `Error: Deleting blog '${blog.title}' by '${blog.author}' failed. It has already been removed`
-      })
-      }
+      const token = user.token
+      deleteBlogMutation.mutate({ blog, token })
     }
   }
 
-  
-
+  const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
   console.log(queryClient.getQueryState(['blogs']))
 
   const loginForm = () => (

@@ -1,4 +1,4 @@
-import { useNotificationValue } from "../contextfiles/NotificationContext"
+import { useNotificationValue } from '../contextfiles/NotificationContext'
 
 const Notification = () => {
   const notification = useNotificationValue()
@@ -7,21 +7,23 @@ const Notification = () => {
     border: 'solid',
     padding: 10,
     borderWidth: 1,
-    marginBottom: 5
+    marginBottom: 5,
   }
 
-  if (notification === '') { return null }
+  if (notification === '') {
+    return null
+  }
 
   if (notification.includes('Error:')) {
     return (
-      <div style={style} className='error'>
+      <div style={style} className="error">
         {notification}
       </div>
     )
-  }  
+  }
 
   return (
-    <div style={style} className='success'>
+    <div style={style} className="success">
       {notification}
     </div>
   )

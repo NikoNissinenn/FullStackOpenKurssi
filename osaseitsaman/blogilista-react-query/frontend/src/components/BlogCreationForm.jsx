@@ -26,12 +26,12 @@ const BlogCreationForm = (props) => {
       props.setBlogformVisible(false)
       notificationDispatch({
         type: 'SET',
-        payload: `New blog ${createdBlog.title} by ${createdBlog.author}`
+        payload: `New blog ${createdBlog.title} by ${createdBlog.author}`,
       })
     } catch {
       notificationDispatch({
         type: 'SET',
-        payload: `Error: Something went wrong when creating new blog. Fill all the fields`
+        payload: `Error: Something went wrong when creating new blog. Fill all the fields`,
       })
     }
   }
