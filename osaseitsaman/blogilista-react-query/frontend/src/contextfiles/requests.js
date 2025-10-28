@@ -55,7 +55,6 @@ export const deleteBlog = async ({ blog, token }) => {
   }
 
   const response = await fetch(`${baseUrl}/${blog.id}`, options)
-  console.log(response)
 
   if (!response.ok) {
     throw new Error('Error: Failed to delete blog')

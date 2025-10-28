@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -12,11 +12,12 @@ import {
   updateBlog,
   deleteBlog,
 } from './contextfiles/requests'
+import UserContext from './contextfiles/UserContext'
 
 const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-  const [user, setUser] = useState(null)
+  const [user, userDispatch] = useContext(UserContext, '')
   const [blogformVisible, setBlogformVisible] = useState(false)
 
   const queryClient = useQueryClient()
@@ -26,7 +27,10 @@ const App = () => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      setUser(user)
+      userDispatch({
+        type: 'SET',
+        payload: user
+      })
       blogService.setToken(user.token)
       notificationDispatch({
         type: 'SET',
@@ -38,6 +42,25 @@ const App = () => {
   const result = useQuery({
     queryKey: ['blogs'],
     queryFn: getBlogs,
+    refetchOnWindowFocus: false,
+    retry: 1,
+  })
+
+  const getUser = () => {
+    const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
+    if (loggedUserJSON) {
+      userDispatch({
+        type: 'SET',
+        payload: JSON.parse(loggedUserJSON)
+      })
+      return JSON.parse(loggedUserJSON)
+    }
+    return ''
+  }
+
+  const userResult = useQuery({
+    queryKey: ['user'],
+    queryFn: getUser,
     refetchOnWindowFocus: false,
     retry: 1,
   })
@@ -104,6 +127,7 @@ const App = () => {
     return <div>Bloglist service not available due to problems in server</div>
   }
 
+
   const blogs = result.data
 
   const handleLogin = async (event) => {
@@ -112,7 +136,10 @@ const App = () => {
       const user = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(user.token)
-      setUser(user)
+      userDispatch({
+        type: 'SET',
+        payload: user
+      })
       setUsername('')
       setPassword('')
       notificationDispatch({
@@ -132,7 +159,10 @@ const App = () => {
     try {
       window.localStorage.removeItem('loggedBlogAppUser', JSON.stringify(user))
       blogService.setToken(null)
-      setUser(null)
+      userDispatch({
+        type: 'CLEAR',
+        payload: ''
+      })
       notificationDispatch({
         type: 'SET',
         payload: 'You have been logged out',
@@ -163,7 +193,6 @@ const App = () => {
   }
 
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes)
-  console.log(queryClient.getQueryState(['blogs']))
 
   const loginForm = () => (
     <form onSubmit={handleLogin}>
