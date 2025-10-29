@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react'
 import Blog from './components/Blog'
-import blogService from './services/blogs'
 import Notification from './components/Notification'
 import BlogCreationForm from './components/BlogCreationForm'
 import { notificationChange } from './reducers/notificationReducer'
@@ -12,7 +11,8 @@ import {
   setLoginData,
 } from './reducers/loginReducer'
 import { Routes, Route, Link } from 'react-router-dom'
-import Users from './components/Users'
+import UsersPage from './components/UsersPage'
+import SingleUserPage from './components/SingleUserPage'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -205,9 +205,9 @@ const App = () => {
       {loginForm()}
       <Routes>
         <Route path='/' element={user.name && blogForm()}></Route>
-        <Route path='/users' element={<Users/>}></Route>
-      </Routes>
-      
+        <Route path='/users' element={<UsersPage/>}></Route>
+        <Route path='/users/:id' element={<SingleUserPage />}></Route>
+      </Routes>      
     </div>
   )
 }
