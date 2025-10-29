@@ -45,43 +45,46 @@ const BlogCreationForm = (props) => {
     <div>
       <h2>Create new blog</h2>
 
-      <form onSubmit={handleNewBlog}>
-        <div>
-          <label>
-            Title:
-            <input
+      <form onSubmit={handleNewBlog} className='w-50 my-3 form-control border border-dark'>
+        <div className='row mb-2 me-2'>
+          <label className='col-sm-2'>
+            Title:            
+          </label>
+          <input
               id="titlefield"
               type="text"
               value={title}
               onChange={({ target }) => setTitle(target.value)}
+              className='col'
             />
-          </label>
         </div>
 
-        <div>
-          <label>
-            Author:
-            <input
+        <div className='row mb-2 me-2'>
+          <label className='col-sm-2'>
+            Author:            
+          </label>
+          <input
               id="authorfield"
               type="text"
               value={author}
               onChange={({ target }) => setAuthor(target.value)}
+              className='col'
             />
-          </label>
         </div>
 
-        <div>
-          <label>
-            Url:
-            <input
+        <div className='row mb-2 me-2'>
+          <label className='col-sm-2'>
+            Url:            
+          </label>
+          <input
               id="urlfield"
               type="text"
               value={url}
               onChange={({ target }) => setUrl(target.value)}
+              className='col'
             />
-          </label>
-        </div>
-        <button data-testid="newblogbutton" type="submit">
+        </div >
+        <button data-testid="newblogbutton" type="submit" className='row m-2'>
           Create
         </button>
       </form>

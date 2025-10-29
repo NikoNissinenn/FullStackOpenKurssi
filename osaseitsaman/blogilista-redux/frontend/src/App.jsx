@@ -11,6 +11,8 @@ import {
   getLoginData,
   setLoginData,
 } from './reducers/loginReducer'
+import { Routes, Route, Link } from 'react-router-dom'
+import Users from './components/Users'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -120,32 +122,44 @@ const App = () => {
   }
 
   const loginForm = () => (
-    <form onSubmit={handleLogin}>
-      <h2>Log in to application</h2>
-      <div>
+    user.username === null ? (
+    <form onSubmit={handleLogin} className='my-3'>
+      <h4 className='mb-3'>Log in to application</h4>
+      <div className='mb-2'>
         <label>
-          Username
+          Username:
           <input
             id="usernamefield"
             type="text"
             value={username}
             onChange={({ target }) => setUsername(target.value)}
+            className='mx-2'
           />
         </label>
       </div>
-      <div>
+      <div className='mb-2'>
         <label>
-          Password
+          Password:
           <input
             id="passwordfield"
             type="password"
             value={password}
             onChange={({ target }) => setPassword(target.value)}
+            className='mx-3'
           />
         </label>
       </div>
-      <button type="submit">Login</button>
-    </form>
+      <button type="submit" className='ml-3'>Login</button>
+    </form>)
+    :(
+    <div className='my-4'>
+      <p className='h5'>
+        {`${user.username} logged in`}
+      </p>
+      <button data-testid="logoutbutton" onClick={handleLogout}>
+        Logout
+      </button>
+    </div>)    
   )
 
   const blogForm = () => {
@@ -154,14 +168,7 @@ const App = () => {
 
     return (
       <div>
-        <p>
-          {`${user.username} logged in`}
-          <button data-testid="logoutbutton" onClick={handleLogout}>
-            Logout
-          </button>
-        </p>
-
-        <div style={hideWhenVisible}>
+        <div style={hideWhenVisible} className='my-3'>
           <button
             data-testid="createblogbutton"
             onClick={() => setBlogformVisible(true)}
@@ -175,7 +182,7 @@ const App = () => {
           <button onClick={() => setBlogformVisible(false)}>Cancel</button>
         </div>
         <div>
-          <ul>
+          <ul className=' w-75 ps-3'>
             {sortedBlogs.map((blog) => (
               <Blog
                 key={blog.id}
@@ -192,11 +199,15 @@ const App = () => {
   }
 
   return (
-    <div>
-      <h1>Blogs</h1>
-      <Notification />
-      {!user.name && loginForm()}
-      {user.name && blogForm()}
+    <div className='container-fluid'>      
+      <h1 className='my-2'>Blogs</h1>
+      <Notification className='my-2'/>      
+      {loginForm()}
+      <Routes>
+        <Route path='/' element={user.name && blogForm()}></Route>
+        <Route path='/users' element={<Users/>}></Route>
+      </Routes>
+      
     </div>
   )
 }

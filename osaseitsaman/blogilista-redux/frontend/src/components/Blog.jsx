@@ -10,16 +10,8 @@ const Blog = ({ blog, handleBlogUpdate, handleBlogDelete, user }) => {
     setBlogInfoVisible(!blogInfoVisible)
   }
 
-  const blogStyle = {
-    paddingTop: 10,
-    paddingLeft: 2,
-    border: 'solid',
-    borderWidth: 1,
-    marginBottom: 5,
-  }
-
   return (
-    <div style={blogStyle}>
+    <div className='border border-dark my-3 py-2'>
       <ul style={hideWhenVisible}>
         <li>
           {blog.title} - {blog.author}{' '}
