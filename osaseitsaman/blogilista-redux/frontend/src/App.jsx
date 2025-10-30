@@ -13,6 +13,7 @@ import {
 import { Routes, Route, Link } from 'react-router-dom'
 import UsersPage from './components/UsersPage'
 import SingleUserPage from './components/SingleUserPage'
+import SingleBlogPage from './components/SingleBlogPage'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -187,9 +188,6 @@ const App = () => {
               <Blog
                 key={blog.id}
                 blog={blog}
-                handleBlogUpdate={handleBlogUpdate}
-                handleBlogDelete={handleBlogDelete}
-                user={user}
               />
             ))}
           </ul>
@@ -207,6 +205,12 @@ const App = () => {
         <Route path='/' element={user.name && blogForm()}></Route>
         <Route path='/users' element={<UsersPage/>}></Route>
         <Route path='/users/:id' element={<SingleUserPage />}></Route>
+        <Route path='/blogs/:id' element={
+          <SingleBlogPage 
+          handleBlogUpdate={handleBlogUpdate}
+          handleBlogDelete={handleBlogDelete}
+          />}>        
+        </Route>
       </Routes>      
     </div>
   )
