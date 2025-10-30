@@ -84,7 +84,7 @@ const BlogCreationForm = (props) => {
               className='col'
             />
         </div >
-        <button data-testid="newblogbutton" type="submit" className='row m-2'>
+        <button data-testid="newblogbutton" type="submit" className='btn btn-primary row m-2'>
           Create
         </button>
       </form>

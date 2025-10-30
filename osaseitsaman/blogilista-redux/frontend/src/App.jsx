@@ -19,11 +19,14 @@ const App = () => {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [blogformVisible, setBlogformVisible] = useState(false)
+  const [loginformVisible, setLoginformVisible] = useState(false)
 
   const dispatch = useDispatch()
 
   const blogs = useSelector((state) => state.blogs.data)
   const user = useSelector((state) => state.logindata)
+
+  const homePage = 'http://localhost:5173'
 
   useEffect(() => {
     dispatch(getBlogs())
@@ -48,6 +51,7 @@ const App = () => {
       dispatch(getLoginData({ username, password }))
       setUsername('')
       setPassword('')
+      setLoginformVisible(false)
     } catch {
       console.log(error, error.message)
     }
@@ -122,9 +126,13 @@ const App = () => {
     }
   }
 
-  const loginForm = () => (
-    user.username === null ? (
-    <form onSubmit={handleLogin} className='my-3'>
+  const loginForm = () => {
+    const hideWhenVisible = { display: blogformVisible ? 'none' : '' }
+    const showWhenVisible = { display: blogformVisible ? '' : 'none' }
+
+    return (
+    loginformVisible === true ? (
+    <form style={hideWhenVisible} onSubmit={handleLogin} className='my-3 form-control'>
       <h4 className='mb-3'>Log in to application</h4>
       <div className='mb-2'>
         <label>
@@ -150,18 +158,10 @@ const App = () => {
           />
         </label>
       </div>
-      <button type="submit" className='ml-3'>Login</button>
+      <button type="submit" className='btn btn-primary ml-3'>Login</button>
     </form>)
-    :(
-    <div className='my-4'>
-      <p className='h5'>
-        {`${user.username} logged in`}
-      </p>
-      <button data-testid="logoutbutton" onClick={handleLogout}>
-        Logout
-      </button>
-    </div>)    
-  )
+    :(<div className={showWhenVisible}></div>)  
+  )}
 
   const blogForm = () => {
     const hideWhenVisible = { display: blogformVisible ? 'none' : '' }
@@ -173,6 +173,7 @@ const App = () => {
           <button
             data-testid="createblogbutton"
             onClick={() => setBlogformVisible(true)}
+            className='btn btn-primary'
           >
             Create new blog
           </button>
@@ -180,7 +181,7 @@ const App = () => {
 
         <div style={showWhenVisible}>
           <BlogCreationForm setBlogformVisible={setBlogformVisible} />
-          <button onClick={() => setBlogformVisible(false)}>Cancel</button>
+          <button className='btn btn-primary' onClick={() => setBlogformVisible(false)}>Cancel</button>
         </div>
         <div>
           <ul className=' w-75 ps-3'>
@@ -197,8 +198,41 @@ const App = () => {
   }
 
   return (
-    <div className='container-fluid'>      
-      <h1 className='my-2'>Blogs</h1>
+    <div className='container-fluid'>
+      <nav className='navbar bg-dark'>
+        <div className='container-fluid'>
+          <ul className='nav flex-wrap'>
+            <li className='nav-item'>
+              <a className='navbar-brand align-text-top' href="#">
+                <img src='../public/vite.svg' alt="Brand icon" />
+              </a>
+            </li>
+            <li className='nav-item'>
+              <a className='nav-link text-white align-text-top' href={homePage}>Blogs</a>
+            </li>
+            <li className='nav-item'>
+              <a className='nav-link text-white align-text-top' href={`${homePage}/users`}>Users</a>
+            </li>
+            {user.username === null ?
+              (<li className='nav-item navbar-text position-absolute end-0 px-5 align-text-top'>
+                <button className='btn btn-primary py-0' data-testid="loginformbutton" onClick={() => setLoginformVisible(true)}>
+                  Log in to application
+                </button>
+              </li>
+              ) : (
+              <li className='nav-item navbar-text px-3 position-absolute end-0 align-text-top'>
+                <span className='text-white px-3 align-top'>{`${user.username} logged in`}</span>
+                <button className='btn btn-primary mx-3 py-0' data-testid="logoutbutton" onClick={handleLogout}>
+                  Logout
+                </button>
+              </li>
+              )
+            }
+          </ul>                 
+        </div>
+      </nav>   
+
+      <h1 className='my-2'>Bloglist application</h1>
       <Notification className='my-2'/>      
       {loginForm()}
       <Routes>
