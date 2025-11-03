@@ -3,6 +3,8 @@ import { useSelector, useDispatch} from 'react-redux'
 import { useEffect } from 'react'
 import { getBlogs } from '../reducers/blogReducer'
 import { Link } from 'react-router-dom'
+import { getComments } from '../reducers/commentReducer'
+import CommentsForm from './CommentsForm'
 
 const SingleBlogPage = ({ handleBlogUpdate, handleBlogDelete }) => {
   const dispatch = useDispatch()
@@ -10,13 +12,25 @@ const SingleBlogPage = ({ handleBlogUpdate, handleBlogDelete }) => {
   const id = useParams().id
   const blog = blogs.find((b) => b.id === String(id))
   const user = useSelector((state) => state.logindata)
+  const comments = useSelector((state) => state.comments.data)
+  
 
   useEffect(() => {
     dispatch(getBlogs())
   }, [dispatch])
 
+  useEffect(() => {
+    if (blog) {
+      dispatch(getComments(blog.id))
+    }
+  }, [dispatch])  
+
   if (!blog) {
-    return null
+    return <div>loading blog data</div>
+  }
+
+  if (!comments) {
+    return <div>loading comments data</div>
   }
 
   return (
@@ -40,7 +54,8 @@ const SingleBlogPage = ({ handleBlogUpdate, handleBlogDelete }) => {
         ) : (
           <></>
         )}
-      </p>  
+      </p>
+      <CommentsForm blog={blog}/>
     </div>
   )
 }

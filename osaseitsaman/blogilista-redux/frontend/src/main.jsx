@@ -9,6 +9,7 @@ import { BrowserRouter as Router } from 'react-router-dom'
 
 store.subscribe(() => {
   const storeNow = store.getState()
+  console.log(storeNow)
 })
 
 ReactDOM.createRoot(document.getElementById('root')).render(  
