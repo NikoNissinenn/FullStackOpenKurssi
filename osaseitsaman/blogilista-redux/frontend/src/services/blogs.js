@@ -4,9 +4,13 @@ import { getToken } from '../reducers/loginReducer'
 
 let token = getToken()
 
-const setToken = (newToken) => {
+export const setToken = (newToken) => {
   token = `Bearer ${newToken}`
 }
+
+const getConfig = () => ({
+  headers: { Authorization: token },
+})
 
 const getAll = async () => {
   const response = await axios.get(baseUrl)
@@ -14,10 +18,7 @@ const getAll = async () => {
 }
 
 const create = async (newObject) => {
-  const config = {
-    headers: { Authorization: token },
-  }
-  const response = await axios.post(baseUrl, newObject, config)
+  const response = await axios.post(baseUrl, newObject, getConfig())
   return response.data
 }
 
@@ -27,10 +28,7 @@ const update = async (id, newObject) => {
 }
 
 const remove = async (id) => {
-  const config = {
-    headers: { Authorization: token },
-  }
-  const response = await axios.delete(`${baseUrl}/${id}`, config)
+  const response = await axios.delete(`${baseUrl}/${id}`, getConfig())
   return response.data
 }
 

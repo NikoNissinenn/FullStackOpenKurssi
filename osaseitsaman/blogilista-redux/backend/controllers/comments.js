@@ -11,11 +11,6 @@ commentsRouter.get('/:id/comments', async (request, response) => {
   response.json(comments)
 })
 
-commentsRouter.get('/:id/comments/', async (request, response) => {
-  const comments = await Comment.find({ blog: request.params.id })
-  response.json(comments)
-})
-
 commentsRouter.post('/:id/comments', async (request, response) => {
   const body = request.body
 

@@ -20,13 +20,17 @@ const SingleBlogPage = ({ handleBlogUpdate, handleBlogDelete }) => {
   }, [dispatch])
 
   useEffect(() => {
-    if (blog) {
+    if (blog && user) {
       dispatch(getComments(blog.id))
     }
   }, [dispatch])  
 
   if (!blog) {
     return <div>loading blog data</div>
+  }  
+
+  if (!user) {
+    return <div>loading comments data</div>
   }
 
   if (!comments) {
@@ -42,7 +46,7 @@ const SingleBlogPage = ({ handleBlogUpdate, handleBlogDelete }) => {
         <button
             data-testid={`likeblogbutton-${blog.title}`}
             onClick={() => handleBlogUpdate(blog)}
-            className='mx-2'
+            className='mx-2 btn btn-primary'
           >
             Like
           </button>
@@ -50,7 +54,7 @@ const SingleBlogPage = ({ handleBlogUpdate, handleBlogDelete }) => {
       <p>Added by {blog.user.username}</p>
       <p>
         {blog.user.username === user.username ? (
-          <button onClick={() => handleBlogDelete(blog)}>Remove blog</button>
+          <button className='btn btn-secondary' onClick={() => handleBlogDelete(blog)}>Remove blog</button>
         ) : (
           <></>
         )}

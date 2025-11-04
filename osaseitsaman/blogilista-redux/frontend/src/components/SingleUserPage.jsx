@@ -21,7 +21,8 @@ const SingleUser = () => {
     <div>
       <h2 className='my-4'>{user.username}</h2>
       <h5 className='mb-3'>Added blogs</h5>
-      <ul>
+      {user.blogs.length > 0 ? (
+        <ul>
         {user.blogs.map((b) => {
           return (
             <li key={b.id}>
@@ -30,6 +31,10 @@ const SingleUser = () => {
           )
         })}
       </ul>
+      ):(
+        <div>No blogs added</div>
+      )}
+      
     </div>
   )
 }

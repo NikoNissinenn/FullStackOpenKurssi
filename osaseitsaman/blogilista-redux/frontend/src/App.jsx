@@ -8,12 +8,15 @@ import { getBlogs, updateBlog, deleteBlog } from './reducers/blogReducer'
 import {
   clearLoginData,
   getLoginData,
+  getLoginState,
   setLoginData,
 } from './reducers/loginReducer'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import UsersPage from './components/UsersPage'
 import SingleUserPage from './components/SingleUserPage'
 import SingleBlogPage from './components/SingleBlogPage'
+import { setToken } from './services/blogs'
+import { useNavigate } from 'react-router-dom'
 
 const App = () => {
   const [username, setUsername] = useState('')
@@ -22,6 +25,7 @@ const App = () => {
   const [loginformVisible, setLoginformVisible] = useState(false)
 
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   const blogs = useSelector((state) => state.blogs.data)
   const user = useSelector((state) => state.logindata)
@@ -33,9 +37,15 @@ const App = () => {
   }, [dispatch])
 
   useEffect(() => {
+    dispatch(getLoginState())
+  }, [dispatch])
+
+  useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBlogAppUser')
     if (loggedUserJSON) {
-      dispatch(setLoginData(JSON.parse(loggedUserJSON)))
+      const user = JSON.parse(loggedUserJSON)
+      dispatch(setLoginData(user))
+      setToken(user.token)
       dispatch(
         notificationChange({
           message: 'Fetched user info from local storage',
@@ -61,6 +71,7 @@ const App = () => {
     event.preventDefault()
     try {
       dispatch(clearLoginData(user))
+      setToken(null)
       dispatch(
         notificationChange({
           message: 'You have been logged out',
@@ -108,6 +119,7 @@ const App = () => {
     if (confirm(text) === true) {
       try {
         dispatch(deleteBlog(blog.id))
+        navigate('/')
         dispatch(
           notificationChange({
             message: `Blog '${blog.title}' by '${blog.author}' deleted`,
@@ -184,6 +196,7 @@ const App = () => {
           <button className='btn btn-primary' onClick={() => setBlogformVisible(false)}>Cancel</button>
         </div>
         <div>
+        {sortedBlogs.length > 0 ? (
           <ul className=' w-75 ps-3'>
             {sortedBlogs.map((blog) => (
               <Blog
@@ -192,6 +205,9 @@ const App = () => {
               />
             ))}
           </ul>
+        ) : (
+          <div className='h5 my-4'>No blogs in list, click 'Create new blog' to start</div>
+        )}          
         </div>
       </div>
     )
@@ -233,7 +249,13 @@ const App = () => {
       </nav>   
 
       <h1 className='my-2'>Bloglist application</h1>
-      <Notification className='my-2'/>      
+      <Notification className='my-2'/>
+      {user.username ? (
+        <></>
+        ) : (
+        <div className='h4 my-5'>Login to application from top right corner</div>
+        )
+      }      
       {loginForm()}
       <Routes>
         <Route path='/' element={user.name && blogForm()}></Route>
