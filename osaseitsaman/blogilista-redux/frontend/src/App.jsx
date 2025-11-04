@@ -197,7 +197,7 @@ const App = () => {
         </div>
         <div>
         {sortedBlogs.length > 0 ? (
-          <ul className=' w-75 ps-3'>
+          <ul className='list-group w-75 ps-3'>
             {sortedBlogs.map((blog) => (
               <Blog
                 key={blog.id}

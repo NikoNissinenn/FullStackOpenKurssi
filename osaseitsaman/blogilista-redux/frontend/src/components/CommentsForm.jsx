@@ -67,11 +67,11 @@ const CommentsForm = ({ blog }) => {
         <button className="ms-3 btn btn-primary" onClick={() => handleNewComment()}>Add comment</button>
         <button className="ms-3 btn btn-primary" onClick={() => setContent('')}>Reset</button>
       </div>
-      <ul>
+      <ul className="list-group">
         {comments.length > 0 ? (
           (comments.map((comment) => {
             return (
-              <li key={comment.id} className='my-1 ps-2'>
+              <li key={comment.id} className='list-group-item my-1 ps-2'>
                 {comment.content}
               </li>)
           })
