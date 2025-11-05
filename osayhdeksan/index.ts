@@ -1,10 +1,10 @@
 import express from 'express';
 import { calculateBmi } from './bmiCalculator';
-const qs = require('qs');
+import qs from 'qs';
 const app = express();
 
 app.set('query parser',
-  (number:number) => qs.parse(number, { /* custom options */ }))
+  (string:string) => qs.parse(string, { /* custom options */ }));
 
 app.get('/hello', (_req, res) => {
   res.send('Hello Full Stack!');
@@ -26,11 +26,15 @@ app.get(`/bmi`, (req, res) => {
       weight: weight,
       height: height,
       bmi: bmi
-    }
+    };
 
     return res.status(200).send(resultJSON);
   } catch (error) {
-    return res.status(400).send({'error': "malformatted parameters"});
+    return res.status(400).send({
+      'error': "malformatted parameters",
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+      'message': `${error.message}`
+    });
   } 
 });
 

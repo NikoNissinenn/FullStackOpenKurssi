@@ -11,45 +11,46 @@ const parseArguments = (args: string[]): bmiInputValues => {
     return {
       value1: Number(args[2]),
       value2: Number(args[3])
-    }
+    };
   } else {
     throw new Error('Provided values were not numbers!');
   }
-}
+};
 
 export const calculateBmi = (h: number, w: number) => {
-  const result = (w / ((h / 100) ** 2))
+  const result = (w / ((h / 100) ** 2));
   
   if (result < 16) {
-    return 'Underweight (Severe thinness)'
+    return 'Underweight (Severe thinness)';
   } else if (result < 17) {
-    return 'Underweight (Moderate thinness)'
+    return 'Underweight (Moderate thinness)';
   } else if (result < 18.5) {
-    return 'Underweight (Mild thinness)'
+    return 'Underweight (Mild thinness)';
   } else if (result < 25) {
-    return 'Normal range'
+    return 'Normal range';
   } else if (result < 30) {
-    return 'Overweight (Pre-obese)'
+    return 'Overweight (Pre-obese)';
   } else if (result < 35) {
-    return 'Obese (Class I)'
+    return 'Obese (Class I)';
   } else if (result < 40) {
-    return 'Obese (Class II)'
+    return 'Obese (Class II)';
   } else if (result >= 40) {
-    return 'Obese (Class III)'
+    return 'Obese (Class III)';
   } else {
-    return ''
+    return '';
   }
-}
+};
 
 try {
   if (require.main === module) {
-    const { value1, value2 } = parseArguments(process.argv)
-    console.log(calculateBmi(value1, value2))
+    const { value1, value2 } = parseArguments(process.argv);
+    console.log(calculateBmi(value1, value2));
   } 
 } catch (error: unknown) {
-  let errorMessage = 'Something bad happened.'
+  let errorMessage = 'Something bad happened.';
   if (error instanceof Error) {
-    errorMessage += 'Error: ' + error.message
+    errorMessage += 'Error: ' + error.message;
+    console.log(errorMessage);
   }
-  console.log(error)
+  console.log(error);
 }
