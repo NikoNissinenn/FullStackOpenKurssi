@@ -1,3 +1,8 @@
+interface ExerciseValues {
+  values: Array<number>;
+  value2: number;
+}
+
 interface ResultValues { 
   periodLength: number,
   trainingDays: number,
@@ -6,6 +11,28 @@ interface ResultValues {
   ratingDescription: string,
   target: number,
   average: number
+}
+
+const parseBmiArguments = (args: string[]): ExerciseValues => {
+  if (args.length < 4) throw new Error('Not enough arguments');
+
+  const values: Array<number> = []
+
+  for (let i = 2; i < (args.length - 1); i++) {
+    if (isNaN(Number(args[i]))) {
+      throw new Error('Provided values were not numbers!');
+    }
+    values.push(Number(args[i]))
+  }
+
+  if (!isNaN(Number(args[args.length - 1]))) {
+    return {
+      values,
+      value2: Number(args[args.length - 1])
+    }
+  } else {
+    throw new Error('Provided target value was not number!')
+  }
 }
 
 
@@ -17,16 +44,16 @@ function calculateExercises(values: Array<number>, target:number) : ResultValues
 
   let success: boolean;
   let ratingDescription: string;
-  let rating: number
+  let rating: number;
 
 
   if (average >= target) {
-    success = true
+    success = true;
   } else {
-    success = false
+    success = false;
   }
 
-  const successPercent = (average / target)
+  const successPercent = (average / target);
 
   if (successPercent >= 1) {
     rating = 3
@@ -53,4 +80,13 @@ function calculateExercises(values: Array<number>, target:number) : ResultValues
 }
 
 
-console.log(calculateExercises([3, 0, 2, 4.5, 0, 3, 1], 2))
+try {
+  let { values, value2 } = parseBmiArguments(process.argv)
+  console.log(calculateExercises(values, value2))
+} catch (error: unknown) {
+  let errorMessage = 'Something bad happened.'
+  if (error instanceof Error) {
+    errorMessage += 'Error: ' + error.message
+  }
+  console.log(error)
+}
