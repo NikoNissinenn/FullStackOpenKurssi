@@ -17,7 +17,7 @@ const parseArguments = (args: string[]): bmiInputValues => {
   }
 }
 
-const calculateBmi = (h: number, w: number) => {
+export const calculateBmi = (h: number, w: number) => {
   const result = (w / ((h / 100) ** 2))
   
   if (result < 16) {
@@ -36,12 +36,16 @@ const calculateBmi = (h: number, w: number) => {
     return 'Obese (Class II)'
   } else if (result >= 40) {
     return 'Obese (Class III)'
+  } else {
+    return ''
   }
 }
 
 try {
-  const { value1, value2 } = parseArguments(process.argv)
-  console.log(calculateBmi(value1, value2))
+  if (require.main === module) {
+    const { value1, value2 } = parseArguments(process.argv)
+    console.log(calculateBmi(value1, value2))
+  } 
 } catch (error: unknown) {
   let errorMessage = 'Something bad happened.'
   if (error instanceof Error) {
