@@ -36,7 +36,7 @@ const parseBmiArguments = (args: string[]): ExerciseValues => {
 };
 
 
-function calculateExercises(values: Array<number>, target:number) : ResultValues {
+export function calculateExercises(values: Array<number>, target:number) : ResultValues {
   const periodLength = values.length;
   const trainingDays = values.filter(v => v > 0).length;
 
@@ -81,8 +81,10 @@ function calculateExercises(values: Array<number>, target:number) : ResultValues
 
 
 try {
-  const { values, value2 } = parseBmiArguments(process.argv);
-  console.log(calculateExercises(values, value2));
+  if (require.main === module) {
+    const { values, value2 } = parseBmiArguments(process.argv);
+    console.log(calculateExercises(values, value2));
+  }  
 } catch (error: unknown) {
   let errorMessage = 'Something bad happened.';
   if (error instanceof Error) {
